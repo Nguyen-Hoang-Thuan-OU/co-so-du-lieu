@@ -32,7 +32,7 @@ ON p.CategoryID = c.CategoryID
 
 ---- 02. In ra thông tin các sản phẩm được cung cấp bởi nhà cung cấp đến từ Mỹ
 
--- Output 1: mã sản phẩm, tên sản phẩm, mã nhà cung cấp, tên nhà cung cấp
+-- Output 1: mã sản phẩm, tên sản phẩm, mã nhà cung cấp, tên nhà cung cấp,
 --	     quốc gia, đơn giá, số lượng trong kho
 SELECT p.ProductID, p.ProductName,
        s.SupplierID, s.CompanyName, s.Country,
@@ -40,7 +40,7 @@ SELECT p.ProductID, p.ProductName,
 FROM Products p FULL JOIN Suppliers s
 ON p.SupplierID = s.SupplierID
 
--- Output 2: mã sản phẩm, tên sản phẩm, mã nhà cung cấp, tên nhà cung cấp
+-- Output 2: mã sản phẩm, tên sản phẩm, mã nhà cung cấp, tên nhà cung cấp,
 --	     đơn giá, số lượng trong kho, mã chủng loại, tên chủng loại
 SELECT p.ProductID, p.ProductName,
        s.SupplierID, s.CompanyName,
