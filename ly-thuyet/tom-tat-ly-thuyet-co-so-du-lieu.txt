@@ -470,18 +470,22 @@ Vì là một phần mềm nên Database Engine (HQTCSDL) còn hỗ trợ:
 
 			- TEXT: Kích thước tối đa 2 GB.
 			- NTEXT:  Kích thước tối đa 1.073.741.823 byte.
+				+ Không cần thiết phải chỉ định kích thước tối đa.
+				+ Cho phép lưu trữ nhiều đoạn văn (nhiều câu).
 			- IMAGE
 
 		* Kiểu số:
 
 			- BIT: Chỉ bao gồm 0, 1 hoặc NULL.
-			- DECIMAL
+			- DECIMAL (precision, scale): Là một kiểu số thực.
+				+ Độ chính xác (precision): Tổng số chữ số (1..38) sẽ có, bao gồm cả dấu chấm/ phẩy.
+				+ Tỷ lệ (scale): Số chữ số bên phải dấu chấm thập phân.
 			- NUMERIC
 			- FLOAT
 			- REAL
 			- TINYINT: Từ 0 .. 255.
 			- SMALLINT: Từ -32.768 .. 32.767.
-			- INT: Từ 2.147.483.648 .. 2.147.483.647.
+			- INT: Từ -2.147.483.648 .. 2.147.483.647.
 			- BIGINT
 			- MONEY
 			- SMALLMONEY
@@ -605,7 +609,7 @@ Tuỳ thuộc vào dữ liệu, loại ngôn ngữ lập trình và ứng dụng
 		+ Đại số quan hệ (Relational Algebra): Được sử dụng để thực hiện các phép toán trên dữ liệu.
 
 			Ví dụ: Tìm tất cả tựa sách xuất bản năm 2000.
-				π(Book name) ( σ (yr_pub=2000) (book) )
+				π (Book name) ( σ (yr_pub = 2000) (book) )
 
 		+ Phép toán quan hệ (Relational Calculus): Được sử dụng để mô tả điều kiện cụ thể mà dữ liệu cần thỏa mãn để trích xuất, không quan tâm thứ tự thực hiện truy xuất mà chỉ quan tâm kết quả.
 
@@ -1281,14 +1285,9 @@ Mục đích thiết kế:
 
 		-> Giúp phân biệt giữa các dòng dữ liệu trong bảng.
 
-		1. Thuộc tính khoá chính (Primary Key): Là một thuộc tính khoá đặc biệt khi giá trị của khoá chính yêu cầu thêm hai điều kiện: không được để trống (cấm NULL) và không được trùng nhau giữa các đối tượng (cấm trùng trên cột).
+		1. Thuộc tính khoá chính (Primary Key): Giúp xác định duy nhất một đối tượng trong một thực thể.
 
-			- Giúp tìm kiếm, sắp xếp và liên kết các bản ghi trong cơ sở dữ liệu.
-
-			- Một hoặc nhiều thuộc tính có thể hợp lại để tạo thành khoá chính.
-				+ Nếu chỉ có một thuộc tính, giá trị của thuộc tính này bắt buộc phải khác nhau giữa các thực thể.
-				+ Nếu có nhiều thuộc tính hợp lại, chỉ cần các kết hợp không bị trùng là được.
-					Ví dụ: [A1, B1], [A1, B2], [A2, B1], [A2, B2], [ ̶A̶2̶,̶ ̶B̶2̶].
+			- Trong ERD, thường chỉ là một thuộc tính duy nhất, nhưng đôi khi cũng yêu cầu phải là sự kết hợp của từ hai thuộc tính trở lên.
 
 			- Nếu trong danh sách thuộc tính của một thực thể không có sẵn thuộc tính để phục vụ cho mục đích định danh.
 				+ Vì giá trị của một thuộc tính sẵn có sẽ không tuân theo quy luật và có nhiều biến động (ví dụ: tên sẽ có độ dài khác nhau, có khoảng trắng và có dấu tiếng Việt,...).
@@ -1303,8 +1302,7 @@ Mục đích thiết kế:
 		2. Thuộc tính khoá ngoại (Foreign Key): Không có trong ERD, chỉ có trong RS.
 			- Là điểm chung giữa hai thực thể, giúp hai thực thể liên kết với nhau.
 			- Là một thuộc tính hoặc tập hợp các thuộc tính trong một bảng, tham chiếu đến khoá chính của bảng khác.
-			- Được sử dụng để thiết lập quan hệ giữa hai hay nhiều bảng.
-				+ Thuộc tính khoá chính của bảng khác "chạy" sang để làm thuộc tính khoá ngoại trong bảng này.
+			- Được sử dụng để thiết lập quan hệ giữa hai hay nhiều bảng khi thuộc tính khoá chính của bảng khác "chạy" sang để làm thuộc tính khoá ngoại trong bảng này.
 
 			-> Khoá chính của bảng này "vi hành" sang làm khoá ngoại của bảng khác.
 
@@ -1842,6 +1840,7 @@ Khi độ phức tạp của dữ liệu ngày càng tăng.
 * Lược đồ cơ sở dữ liệu quan hệ (Relational Database Schema): Đảm nhận phần còn thiếu của RS khi giúp biểu diễn cấu trúc và mối quan hệ / kết nối giữa các bảng trong CSDL.
 	- Gồm nhiều lược đồ quan hệ (RS) để tạo thành một CSDL.
 	- Được sử dụng để thể hiện giàn khung (Skeleton) của CSDL, biểu diễn mối quan hệ giữa các bảng.
+	- Cũng vì để biểu diễn mối quan hệ giữa các bảng, nên không được phép có bất kì bảng nào nằm riêng lẻ - không có liên kết với các bảng khác trong cùng CSDL.
 
 		Ví dụ: Nhiều bảng liên quan.
 			SinhViên(M̲ã̲S̲V̲, TênSV, EmailSV)
@@ -2039,14 +2038,13 @@ Tất cả các giá trị trong cùng một cột phải đến từ một mi�
 * Ràng buộc trong CSDL sẽ được chia làm 3 loại chính:
 
 	1. Implicit Constraint (Default Constraint / Inherent Model-Based Constraint): Những ràng buộc vốn có của mô hình dữ liệu, tự động được HQTCSDL áp dụng cho dữ liệu mà không cần sự can thiệp từ con người.
-		- Not Null Constraint: Mặc định, một cột trong bảng không được null mà bắt buộc phải chứa giá trị.
-		- [???] Default Value Constraint: Một giá trị mặc định sẽ được tự động gán cho cột nếu không cung cấp giá trị trong quá trình thêm dữ liệu.
 
 		Ví dụ:
 			- Tên của bảng không được trùng.
 			- Tên của cột không được trùng.
 			- Không thể có hai dòng trùng nhau.
 			- Mỗi ô trong cột chỉ chứa giá trị đơn.
+			- Không quan trọng thứ tự của các dòng và cột.
 
 	2. Explicit Constraint (Schema-Based Constraint): Những ràng buộc được gài bằng những câu lệnh DDL (những câu lệnh tạo dựng dàn khung cho bảng) trong SQL hoặc thao tác trực tiếp trên giao diện của HQTCSDL.
 	
@@ -2076,7 +2074,12 @@ Tất cả các giá trị trong cùng một cột phải đến từ một mi�
 		
 		- Vì vậy, thuộc tính khoá chính được sử dụng, mỗi khoá chính sẽ giúp xác định chính xác và duy nhất một dòng dữ liệu trong bảng.
 
-			Ví dụ: cột "Mã đơn hàng", "Mã số sinh viên", "Mã thẻ căn cước công dân"...
+			Ví dụ: cột "Mã đơn hàng", "Mã số sinh viên", "Mã thẻ căn cước công dân",...
+
+		- Một hoặc nhiều cột có thể hợp lại để tạo thành khoá chính.
+			+ Nếu chỉ có một cột, giá trị của cột này bắt buộc phải khác nhau giữa các thực thể.
+			+ Nếu có nhiều cột hợp lại, chỉ cần các kết hợp không bị trùng là được.
+				Ví dụ: [A1, B1], [A1, B2], [A2, B1], [A2, B2], [ ̶A̶2̶,̶ ̶B̶2̶].
 
 		-> Cách để định vị một thông tin duy nhất giữa vô vàn thông tin.
 
@@ -2087,16 +2090,18 @@ Tất cả các giá trị trong cùng một cột phải đến từ một mi�
 		* Phân loại khoá:
 
 			- Siêu khoá (Super Key): Cũng là một hoặc nhiều cột giúp xác định duy nhất một dòng trong bảng.
-				+ Các cột sẽ kết hợp với nhau, thậm chí là tất cả các cột cùng kết hợp.
+				+ Có thể chỉ là một cột hoặc các cột sẽ kết hợp với nhau, thậm chí là tất cả các cột cùng kết hợp.
 				+ Tạo thành một tập vô cùng lớn, dư thừa rất nhiều dữ liệu, chỉ để xác định được một dòng trong bảng.
 				+ Nói cách khác, cứ là khoá - cứ giúp xác định một dòng trong bảng thì được gọi là siêu khoá.
-				+ Đóng vai trò như "chợ đầu mối", chuyên cung cấp lẻ khoá cho nơi khác.
+				+ Đóng vai trò như "chợ đầu mối", chuyên "phân phối" khoá cho nơi khác.
+
+				-> Một hoặc nhiều cột có tính chất duy nhất và không trùng lặp trong bảng.
 
 				Ví dụ: Tất cả các cột đều có thể kết hợp để làm siêu khoá.
 
 					PhòngThi (S̲B̲D̲, M̲ã̲S̲V̲, H̲ọ̲T̲ê̲n̲, N̲g̲à̲y̲S̲i̲n̲h̲)
 
-			- Khoá ứng viên (Candidate Key): Được trích xuất từ siêu khoá, nhưng chỉ chọn ra những tập bé nhất bằng cách loại bỏ đi những cột thừa.
+			- Khoá tương đương / Khoá ứng viên (Candidate Key): Được trích xuất từ siêu khoá, nhưng chỉ chọn ra những tập bé nhất bằng cách loại bỏ đi những cột thừa.
 
 				Ví dụ: Là tập bé nhất trong siêu khoá.
 
@@ -2104,9 +2109,9 @@ Tất cả các giá trị trong cùng một cột phải đến từ một mi�
 
 					PhòngThi (SBD, M̲ã̲S̲V̲, HọTên, NgàySinh)
 
-			- Khoá chính (PRIMARY KEY - PK): Là một trong nhiều khoá ứng viên được chọn ra.
+			- Khoá chính (PRIMARY KEY - PK): Là khoá được chọn ra từ nhiều khoá ứng viên.
 				+ Là một cột đặc biệt với giá trị bên trong bị cấm trùng trên mọi dòng (cấm trùng trên mọi ô cùng cột).
-				+ Giá trị cấm trùng đó sẽ được sử dụng để làm đại diện cho cả một dòng, giúp xác định duy nhất một đối tượng / thực thể.
+				+ Giá trị cấm trùng đó sẽ được sử dụng để làm đại diện cho cả một dòng, giúp xác định duy nhất một đối tượng / thực thể; từ đó mà các thao tác tìm kiếm, sắp xếp,... cũng trở nên dễ dàng hơn.
 				+ Trong khoá chính đã bao gồm ràng buộc NOT NULL (NOT NULL Constraint).
 				+ Nên chọn khoá chính là sự kết hợp của ít cột nhất (tốt nhất là chỉ có một cột) và không chứa đa trị.
 					Ví dụ: Số điện thoại và email vẫn đủ để làm khoá chính, nhưng một người lại có thể có nhiều số điện thoại và email.
@@ -2164,11 +2169,14 @@ Tất cả các giá trị trong cùng một cột phải đến từ một mi�
 
 	- NOT NULL: Giá trị trong một ô không được phép mang trạng thái NULL, mà bắt buộc phải có giá trị.
 
-		- Thường thấy dưới dạng dấu hoa thị màu đỏ (*) tại các biểu mẫu / đơn nhập dữ liệu.
+		+ Thường thấy dưới dạng dấu hoa thị màu đỏ (*) tại các biểu mẫu / đơn nhập dữ liệu.
 
-		- Nhưng không phải lúc nào cũng sử dụng NOT NULL, vì người dùng rất ngại trong việc bị sưu tầm thông tin.
+		+ Nhưng không phải lúc nào cũng sử dụng NOT NULL, vì người dùng rất ngại trong việc bị sưu tầm thông tin.
 
-	- UNIQUE
+	- UNIQUE:
+		+ Không bắt buộc phải nhập dữ liệu, mặc định sẽ bằng NULL nếu không nhập.
+		+ Nếu có nhập liệu, dữ liệu này sẽ là duy nhất.
+		+ Vì mỗi bảng chỉ được phép có một khoá chính, nên có thể sử dụng hai ràng buộc là UNION và NOT NULL để cho biết đây là khoá tương đương / khoá ứng viên (Candidate Key).
 
 	- CHECK
 
@@ -2275,14 +2283,16 @@ Ngoài ra, các ràng buộc dữ liệu cũng được phân loại theo số l
 Sau khi đã tạo ra được cấu trúc để lưu trữ dữ liệu, không còn bàn về lý thuyết và thiết kế nữa, mà chỉ quan tâm đến những dữ liệu trong CSDL và những truy vấn trên đấy.
 
 	- Cho phép khai thác "không xâm lấn": truy vấn (xem), sắp xếp,... dữ liệu trong bảng.
-		+ Cho phép truy vấn dữ liệu và đưa ra thông tin cần thiết.
+		+ Cho phép truy vấn, rút trích dữ liệu và đưa ra thông tin cần thiết.
 		+ Giúp trả lời cho những câu hỏi liên quan đến thống kê, báo cáo và phân tích dữ liệu.
+		+ Đây là chế độ "chỉ xem", sẽ không làm ảnh hưởng đến dữ liệu và cũng không gây ra các vi phạm về ràng buộc dữ liệu.
 
 		-> Phép toán đại số quan hệ (Relational Algebra Operation).
 
 	- Cho phép khai thác "có xâm lấn": thêm-sửa-xoá dữ liệu trong bảng.
-		+ Cho phép ra dữ liệu và quản lý sự thay đổi của dữ liệu theo thời gian.
+		+ Cho phép tạo ra dữ liệu và quản lý sự thay đổi của dữ liệu theo thời gian.
 		+ Giúp duy trì tính đúng đắn của dữ liệu trong bảng.
+		+ Đây là chế độ "chỉnh sửa", sẽ làm ảnh hướng đến dữ liệu, có nguy cơ gây ra các vi phạm về ràng buộc dữ liệu và yêu cầu phải có cách để xử lý.
 
 		-> Phép toán cập nhật (Update Operation / Modification Operation).
 
@@ -2296,17 +2306,23 @@ Trong đại số quan hệ:
 	- Vì vậy, ta có thể áp dụng các phép toán lên các biến này để ra được một kết quả mới mà không làm ảnh hưởng đến các giá trị gốc.
 
 * Phép toán đại số quan hệ (Relational Algebra Operation): Chỉ được sử dụng để khai thác "không xâm lấn" dữ liệu trong CSDL.
-	- Là các phép toán cụ thể, được áp dụng lên dữ liệu trong bảng.
+	- Là bộ một các phép toán và quy tắc, được áp dụng lên dữ liệu trong bảng.
+	- Được xem là một ngôn ngữ thủ tục vì có chỉ định rõ cách thức và thứ tự thực hiện truy vấn.
 	- Giúp khai thác (lấy) dữ liệu trong các bảng của một HQTCSDL.
+	- Hiểu được ĐSQH là chìa khoá để hiểu cách xử lý và tối ưu hoá câu truy vấn.
 	- Tạo ra một bảng mới để lưu kết quả chứ không hề làm thay đổi bảng ban đầu.
 		+ Có thể nhận đầu vào là một hoặc nhiều bảng.
 		+ Nhưng kết quả đầu ra chỉ là duy nhất một bảng mới.
 
-		-> ĐSQH là ngôn ngữ có tính chất đóng.
+		-> ĐSQH là ngôn ngữ có tính chất đóng (closure).
 
 	-> Xác định cách truy vấn và thao tác dữ liệu.
 
-* Biểu thức đại số quan hệ (Relational Algebra Expression): Gồm các phép toán ĐSQH nối với nhau, tạo thành một chuỗi (sequence).
+* Bảng cơ sở / Bảng gốc (Base Relation): Là bảng thực sự chưa dữ liệu gốc, được lưu xuống ổ đĩa đưới dạng tập tin.
+
+* Bảng mới (Composition of Relation): Là bảng mới, có thể xem là một bảng ảo/ khung nhìn - view (được lưu trong RAM), được tạo ra từ sự kết hợp (composition) của hai bảng và chứa thông tin từ cả hai bảng.
+
+* Biểu thức đại số quan hệ (Relational Algebra Expression): Gồm các phép toán ĐSQH nối với nhau, sắp xếp theo một tứ tự, tạo thành một chuỗi (sequence) để mô tả câu truy vấn.
 
 	Ví dụ: π Fname, Lname, Salary (σ Dno = 5 (EMPLOYEE))
 
@@ -2336,7 +2352,7 @@ Trong đại số quan hệ:
 		1. Biểu diễn bằng một chuỗi / tầng (sequence / cascade) trên một dòng (in-line expression): Các phép toán được lồng vào nhau và có thể sử dụng dấu ngoặc để thay đổi độ ưu tiên.
 			Ví dụ: π MaNV, MaDA (NHANVIEN_DUAN) ÷ π MaDA (σ MaPB = 1 (DUAN))
 
-		2. Sử dụng phép gán (Assignment Operation): Cho phép đặt tên để tái sử dụng giống như biến.
+		2. Sử dụng phép gán (Assignment Operation): Cho phép đặt tên cho kết quả truy vấn để tái sử dụng giống như việc lưu giá trị vào trong biến.
 
 			* Kí hiệu: R’ ← E.
 
@@ -2380,11 +2396,11 @@ Trên thực tế, có rất nhiều cách để phân loại các phép toán c
 
 		1. Phép chọn (SELECT / RESTRICT / FILTER) | σ: Lựa dòng để hiển thị.
 
-			* Công thức tổng quát: σ ϕ (R) = {t | t ∈ R, ϕ(t)}
+			* Công thức tổng quát: σ ϕ (R) = {t | t ∈ R AND ϕ(t)}
 
 				- Điều kiện lọc là ϕ (phi - Φ / φ) của phép chọn σ (sigma) trên bảng R sẽ tương đương như các câu lệnh if trong lập trình.
 
-				- Điều kiện lọc (predicate) là một biểu thức luận lý - đúng/sai (Boolean Expression), gọi tắt là biểu thức điều kiện, được tạo thành từ một số mệnh đề (clause), gồm ba thành phần chính:
+				- Điều kiện lọc (vị từ - predicate) là một biểu thức luận lý - đúng/sai (Boolean Expression), gọi tắt là biểu thức điều kiện, được tạo thành từ một số mệnh đề (clause), gồm ba thành phần chính:
 
 					1. Tên thuộc tính (Attribute Name): Tên các thuộc tính có trong bảng R.
 
@@ -2401,6 +2417,11 @@ Trên thực tế, có rất nhiều cách để phân loại các phép toán c
 						- σ A ϴ B (R): σ Age = Weight (PERSON)
 
 				- Giữa các mệnh đề (clause) có thể kết nối với nhau bằng các toán tử luận lý (Boolean Operator): NOT (¬), AND (∧), OR (∨).
+					+ Độ ưu tiên khi thực hiện các phép toán luận lý:
+						1. NOT
+						2. AND
+						3. OR
+					+ Để thay đổi độ ưu tiên này, bắt buộc phải sử dụng cặp dấu ngoặc đơn.
 
 					Ví dụ: σ (Dno = 4 AND Salary > 30000) (EMPLOYEE)
 
@@ -2418,6 +2439,12 @@ Trên thực tế, có rất nhiều cách để phân loại các phép toán c
 					σ <dk₁> (σ <dk₂> (... (σ <dkₙ> (R)) ...))
 				     =
 					σ <dk₁> AND <dk₂> AND ... AND <dkₙ> (R)
+
+				- Nhưng trong thực tế, để tối ưu hiệu xuất thực thi...
+					+ Nên sử dụng kiểu lồng nhau, vì số lượng kết quả sẽ giảm đi sau mỗi phép chọn.
+						| σ <dk₁> (σ <dk₂> (R))
+					+ Nếu kết hợp với nhau bằng toán tử AND, mặc dù sẽ dễ đọc hơn và chỉ thực hiện lọc một lần duy nhất, nhưng số lần kiểm tra điều kiện sẽ nhiều hơn.
+						| σ <dk₁> AND <dk₂> (R)
 
 			* Trong SQL, điều kiện chọn chính là mệnh đề WHERE.
 
@@ -2485,11 +2512,11 @@ Trên thực tế, có rất nhiều cách để phân loại các phép toán c
 						SELECT DISTINCT Gender, Salary
 						FROM EMPLOYEE
 
-			* Công thức mở rộng (Extended Projection):
+			* Phép chiếu tổng quát (Generalized Projection):
 
 				- Ngoài việc sử dụng phép chiếu để giảm số cột.
 					+ Giúp hai bảng dễ dàng thoả điều kiện sử dụng các phép toán tập hợp: hợp, giao và trừ.
-					+ Ta cũng có thể sử dụng phép chiếu để phát sinh ra cột (ví dụ: thuộc tính dẫn xuất trong ERD).
+					+ Ta cũng có thể sử dụng phép chiếu để thay đổi thông tin hiển thị hoặc phát sinh ra cột (ví dụ: thuộc tính dẫn xuất trong ERD).
 
 				- Có thể sử dụng các phép toán số học lên các cột.
 					+ Phép toán sẽ thay đổi một cột nào đấy.
@@ -2668,7 +2695,8 @@ Trên thực tế, có rất nhiều cách để phân loại các phép toán c
 					- Ngoài ra, ta có thể biểu diễn phép giao bằng phép trừ: R ∩ S = R − (R − S).
 			
 			* Trong SQL cũng có các mệnh đề UNION, INTERSECT và EXCEPT tương ứng với các phép toán tập hợp.
-				- Ngoài ra còn có các từ khoá UNION ALL, INTERSECT ALL và EXCEPT ALL để bỏ qua việc tự động loại bỏ đi kết quả trùng.
+				- Các phép toán này trên SQL cũng sẽ tự động loại bỏ đi những dòng trùng (không giống như phép chiếu của SQL).
+				- Vì vậy, SQL có bổ sung thêm các từ khoá UNION ALL, INTERSECT ALL và EXCEPT ALL để bỏ qua việc tự động loại bỏ đi kết quả trùng.
 
 				Ví dụ: Các phép toán tập hợp trong SQL.
 
@@ -2756,8 +2784,9 @@ Trên thực tế, có rất nhiều cách để phân loại các phép toán c
 						----------------
 
 
-			1.4. Phép tích Đềcác (CARTESIAN PRODUCT / CROSS PRODUCT / CROSS JOIN) | ×: Từng dòng của bảng thứ nhất sẽ đi kết hợp với từng dòng của bảng thứ hai.
+			1.4. Phép tích Đềcác (CARTESIAN PRODUCT) | ×: Từng dòng của bảng thứ nhất sẽ đi kết hợp với từng dòng của bảng thứ hai.
 
+				- Còn được gọi là phép kết chéo (CROSS PRODUCT / CROSS JOIN), là một trong ba loại phép kết (JOIN).
 				- Không được chính thức xem là một phần của các phép toán tập hợp.
 				- Nhưng vẫn liên quan đến tập hợp vì nó tạo ra một tập hợp mới từ hai tập hợp đã cho.
 				-> Xếp chung dù không phải là một phép toán tập hợp.
@@ -2837,22 +2866,38 @@ Trên thực tế, có rất nhiều cách để phân loại các phép toán c
 
 			2.1. Phép kết nối (JOIN) | ⋈:
 
-				Bản chất của JOIN vẫn chỉ là phép tích Đềcác.
+				- Bản chất của JOIN vẫn chỉ là phép tích Đềcác (Phép kết chéo - Cross join).
 					- Nhân từng dòng (cả một dòng) của bảng thứ nhất với từng dòng của bảng thứ hai.
 					- Nhưng có bổ sung thêm các điều kiện so sánh chọn để loại bỏ đi những dòng không hợp lệ và những dòng không mong muốn sau khi nhân.
 
-				-> Tương đương với phép tích Đềcác, nhưng có thêm phép chọn.
+						-> Tương đương với phép tích Đềcác, nhưng có thêm phép chọn.
 
-				Một số khái niệm có liên quan:
+					=> Phép kết nội (Inner join): Loại kết nối tự động loại bỏ những dòng không cần thiết.
 
-					- Cột kết nối (Join Attribute): Là cột được sử dụng để kết nối.
-						+ Có thể là cột chung (trùng tên) giữa hai bảng.
-						+ Cũng có thể là hai cột riêng biệt.
+				- Có ba loại phép kết nối (JOIN):
 
-					- Điều kiện kết nối (Join Condition): Là một mệnh đề mô tả cách thức kết nối giữa các cột bằng toán tử so sánh.
-						+ Có thể bao gồm cả toán tử luận lý.
-						+ Điều kiện kết nối sẽ trả về giá trị luận lý (TRUE, FALSE, hoặc NULL).
-						+ Chỉ những kết quả thoả điều kiện (là TRUE) thì mới được chọn, những kết quả không thoả (có thể là FALSE hoặc đang mang giá trị NULL) sẽ không được chọn.
+					1. Phép kết chéo (CROSS JOIN).
+					
+					2. Phép kết nội (INNER JOIN).
+						2.1. Phép kết theta (Theta join).
+						2.2. Phép kết bằng (Equi join).
+						2.3. Phép kết tự nhiên (Natural join).
+
+					3. Phép kết ngoại (OUTER JOIN).
+						3.1. Phép kết ngoại bên trái (Left outer join)
+						3.2. Phép kết ngoại bên phải (Right outer join)
+						3.3. Phép kết ngoại đủ (Full outer join).
+
+				- Một số khái niệm có liên quan:
+
+					* Cột kết nối (Join Attribute): Là cột được sử dụng để kết nối.
+						- Có thể là cột chung (cùng miền giá trị) giữa hai bảng.
+						- Cũng có thể là hai cột riêng biệt, nhưng lúc này, kết quả có thể không như mong đợi hoặc không hợp lý.
+
+					* Điều kiện kết nối (Join Condition): Là một mệnh đề mô tả cách thức kết nối giữa các cột bằng toán tử so sánh.
+						- Có thể bao gồm cả toán tử luận lý AND và OR.
+						- Điều kiện kết nối sẽ trả về giá trị luận lý (TRUE, FALSE, hoặc NULL).
+						- Chỉ những kết quả thoả điều kiện (là TRUE) thì mới được chọn, những kết quả không thoả (có thể là FALSE hoặc đang mang giá trị NULL) sẽ không được chọn.
 
 						Ví dụ:
 							NhanVien ⋈ (NhanVien.MaPB = PhongBan.MaPB AND TenPB = 'CNTT') PhongBan
@@ -2860,9 +2905,9 @@ Trên thực tế, có rất nhiều cách để phân loại các phép toán c
 							- Cột kết nối: NhanVien.MaPB và PhongBan.MaPB
 							- Điều kiện kết nối: NhanVien.MaNV = PhongBan.MaNV AND TenPB = 'CNTT'
 
-					- Tỷ lệ chọn lọc kết nối (Join Selectivity - JS):
-						+ Được tính bằng công thức: Số dòng trả về / số dòng của phép kết tự nhiên.
-						+ Thường được dùng để đánh giá hiệu suất của việc truy xuất.
+					* Tỷ lệ chọn lọc kết nối (Join Selectivity - JS):
+						- Được tính bằng công thức: Số dòng trả về / số dòng của phép kết tự nhiên.
+						- Thường được dùng để đánh giá hiệu suất của việc truy xuất.
 
 				* Phép kết theta (Theta/General join): R ⋈ ϴ S = σ ϕ (R × S)
 
@@ -2870,7 +2915,10 @@ Trên thực tế, có rất nhiều cách để phân loại các phép toán c
 					- Điều kiện lọc áp dụng các phép toán so sánh: =, ≠, <, ≤, >, ≥.
 						+ Nếu chỉ sử dụng dấu '=' để so sánh giữa các cột sẽ được gọi là phép kết tương đương (Equi join).
 						+ Những phép so sánh còn lại sẽ được gọi là phép kết không tương đương (Non-equi join).
-					- Cột điều kiện không cần phải là cột chung giữa hai bảng, mà có thể là sự kết hợp giữa hai hay nhiều cột trong cùng một bảng (ví dụ: (ThoiGianNghiLam - ThoiGianVaoLam) > 2 năm).
+					- Cột điều kiện có thể:
+						+ Là cột chung giữa hai bảng, được so sánh với nhau bằng các phép toán so sánh {=, ≠, <, ≤, >, ≥}.
+						+ Cũng có thể bao gồm hai hay nhiều cột trong cùng một bảng.
+							Ví dụ: (ThoiGianNghiLam - ThoiGianVaoLam) > 2 năm.
 
 					Ví dụ: Tìm ra tên phòng ban đang quản lý dự án.
 
@@ -2947,14 +2995,7 @@ Trên thực tế, có rất nhiều cách để phân loại các phép toán c
 					| PB03 | KD    | DA02 | B     |
 					-------------------------------
 
-
-				* Phép kết ngoài (Outer join): R ⋈ ϴ S
-
-					- Right join
-					- Left join
-
-
-				* Phép nửa kết (Semi join): R ⋈ ϴ S
+				* Phép nửa kết (Semi join): Jack.
 
 				* Trong SQL, các bảng cần kết nối sẽ liệt kê trong mệnh đề FROM:
 
@@ -3188,7 +3229,7 @@ Trên thực tế, có rất nhiều cách để phân loại các phép toán c
 	Phép chiếu (PROJECT): π <cột₁, cột₂, ..., cộtₙ> (R)
 
 	Phép đổi tên (RENAME): ρ <tên bảng hoặc cột mới> (R)
-	Phép kết nối (JOIN): R ⋈ ϴ S
+	Phép kết nối theta (THETA JOIN): R ⋈ ϴ S
 	Phép chia (DIVISION): R ÷ S
 
 	Phép gán  (Assignment Operation): R’ ← E
@@ -3217,113 +3258,436 @@ Trên thực tế, có rất nhiều cách để phân loại các phép toán c
 				σ SellPrice > 100000 (Product)
 
 			3. Lấy ra những nhân viên từng bán sản phẩm.
-				R1 = Invoice ⋈ Employee
-				R2 = π EmployeeID, FullName, Gender, BirthDate, Address (R1)
+				R1 ← Invoice ⋈ Employee
+				R2 ← π EmployeeID, FullName, Gender, BirthDate, Address (R1)
 
 			4. Lấy ra những sản phẩm được bán vào tháng 8.
-				R1 = InvoiceLine ⋈ Invoice
-				R2 = R1 ⋈ Product
-				R3 = σ month(SellDate) = 8 (R2)
-				R4 = π ProductCode, ProductName, PurchasePrice, SellPrice, Type, SupplierCode (R3)
+				R1 ← InvoiceLine ⋈ Invoice
+				R2 ← R1 ⋈ Product
+				R3 ← σ month(SellDate) = 8 (R2)
+				R4 ← π ProductCode, ProductName, PurchasePrice, SellPrice, Type, SupplierCode (R3)
 
 		* BT2:
 
 			1. Lấy ra tên và giá bán của những sản phẩm TV được cung cấp bởi SONY.
-				R1 = Product ⋈ Supplier
-				R2 = σ Type = "TV" AND SupplierName = "SONY" (R1)
-				R3 = π ProductName, SellPrice (R2)
+				R1 ← Product ⋈ Supplier
+				R2 ← σ Type = "TV" AND SupplierName = "SONY" (R1)
+				R3 ← π ProductName, SellPrice (R2)
 
 			2.1. Lấy ra tên và địa chỉ của các nhà cung cấp sản phẩm TV.
-				R1 = Product ⋈ Supplier
-				R2 = σ Type = "TV" (R1)
-				R3 = π SupplierName, Address (R2)
+				R1 ← Product ⋈ Supplier
+				R2 ← σ Type = "TV" (R1)
+				R3 ← π SupplierName, Address (R2)
 
 			2.2.* Lấy ra tên và địa chỉ của các nhà cung cấp sản phẩm TV hoặc ĐT.
-				R1 = Product ⋈ Supplier
-				R2 = σ Type = "TV"(R1)
-				R3 = σ Type = "Mobile" (R1)
-				R4 = R3 ∪ R2
-				R5 = π SupplierName, Address (R4)
+				R1 ← Product ⋈ Supplier
+				R2 ← σ Type = "TV"(R1)
+				R3 ← σ Type = "Mobile" (R1)
+				R4 ← R3 ∪ R2
+				R5 ← π SupplierName, Address (R4)
 
 			3. Lấy ra tên của tất cả các nhân viên sinh năm 2000.
-				R1 = σ year(BirthDay) = 2000 (Employee)
-				R2 = π FullName (R1)
+				R1 ← σ year(BirthDay) = 2000 (Employee)
+				R2 ← π FullName (R1)
 
 			4. Lấy ra tên và loại của tất cả sản phẩm được bán vào ngày 23/05/2020.
-				R1 = InvoiceLine ⋈ Invoice
-				R2 = σ SellDate = "23/05/2020" (R1)
-				R3 = R2 ⋈ Product
-				R4 = π ProductName, Type (R3)
+				R1 ← InvoiceLine ⋈ Invoice
+				R2 ← σ SellDate = "23/05/2020" (R1)
+				R3 ← R2 ⋈ Product
+				R4 ← π ProductName, Type (R3)
 
 			5.1. Lấy ra tên của những nhân viên nữ đã từng bán TV.
-				R1 = InvoiceLine ⋈ Invoice
-				R2 = R1 ⋈ Employee
-				R3 = R2 ⋈ Product
-				R4 = σ Gender = "Female" AND Type = "TV" (R3)
-				R5 = π FullName (R4)
+				R1 ← InvoiceLine ⋈ Invoice
+				R2 ← R1 ⋈ Employee
+				R3 ← R2 ⋈ Product
+				R4 ← σ Gender = "Female" AND Type = "TV" (R3)
+				R5 ← π FullName (R4)
 
 			5.2.* Lấy ra tên của những nhân viên nữ đã từng bán TV hoặc ĐT.
-				R1 = InvoiceLine ⋈ Invoice
-				R2 = R1 ⋈ Employee
-				R3 = R2 ⋈ Product
-				R4 = σ Gender = "Female" (R3)
-				R5 = σ Type = "TV" (R4)
-				R6 = σ Type = "Mobile" (R4)
-				R7 = R4 ∪ R5
-				R8 = π FullName (R5)
+				R1 ← InvoiceLine ⋈ Invoice
+				R2 ← R1 ⋈ Employee
+				R3 ← R2 ⋈ Product
+				R4 ← σ Gender = "Female" (R3)
+				R5 ← σ Type = "TV" (R4)
+				R6 ← σ Type = "Mobile" (R4)
+				R7 ← R4 ∪ R5
+				R8 ← π FullName (R5)
 
 			6.1. Lấy ra tên và địa chỉ của các nhà cung cấp có cung cấp TV và ĐT.
-				R1 = Supplier ⋈ Product
-				R2 = σ Type = "TV" (R1)
-				R3 = σ Type = "Mobile" (R1)
-				R4 = R2 ∩ R3
-				R5 = π SupplierName, Address (R4)
+				R1 ← Supplier ⋈ Product
+				R2 ← σ Type = "TV" (R1)
+				R3 ← σ Type = "Mobile" (R1)
+				R4 ← R2 ∩ R3
+				R5 ← π SupplierName, Address (R4)
 
 			6.2.* Lấy ra tên và địa chỉ của các nhà cung cấp chỉ cung cấp TV hoặc chỉ cung cấp ĐT.
-				R1 = Supplier ⋈ Product
-				R2 = σ Type = "TV" (R1)
-				R3 = σ Type = "Mobile" (R1)
-				R4 = R2 ∩ R3
-				R5 = R2 − R4
-				R6 = R3 − R4
-				R7 = R3 ∪ R5
-				R8 = π SupplierName, Address (R7)
+				R1 ← Supplier ⋈ Product
+				R2 ← σ Type = "TV" (R1)
+				R3 ← σ Type = "Mobile" (R1)
+				R4 ← R2 ∩ R3
+				R5 ← R2 − R4
+				R6 ← R3 − R4
+				R7 ← R3 ∪ R5
+				R8 ← π SupplierName, Address (R7)
 
 			7. Lấy ra tên và giá của tất cả sản phẩm được bán bởi nhân viên "Nguyễn Văn An" trong tháng 04/2020.
-				R1 = InvoiceLine ⋈ Invoice
-				R2 = R1 ⋈ Employee
-				R3 = R2 ⋈ Product
-				R4 = σ FullName = "Nguyễn Văn An" AND month(SellDate) = "04" AND year(SellDate) = "2000" (R3)
-				R5 = π ProductName, SellPrice (R4)
+				R1 ← InvoiceLine ⋈ Invoice
+				R2 ← R1 ⋈ Employee
+				R3 ← R2 ⋈ Product
+				R4 ← σ FullName = "Nguyễn Văn An" AND month(SellDate) = "04" AND year(SellDate) = "2000" (R3)
+				R5 ← π ProductName, SellPrice (R4)
 
 			8. Lấy ra tên và giá của tất cả sản phẩm ĐT của LG trong tháng 04/2020.
-				R1 = InvoiceLine ⋈ Invoice
-				R2 = R1 ⋈ Product
-				R3 = R2 ⋈ Supplier
-				R4 = σ Type = "Mobile" AND SupplierName = "LG" (R1)
-				R5 = σ month(SellDate) = "04" AND year(SellDate) = "2000" (R4)
-				R6 = π ProductName, SellPrice (R5)
+				R1 ← InvoiceLine ⋈ Invoice
+				R2 ← R1 ⋈ Product
+				R3 ← R2 ⋈ Supplier
+				R4 ← σ Type = "Mobile" AND SupplierName = "LG" (R1)
+				R5 ← σ month(SellDate) = "04" AND year(SellDate) = "2000" (R4)
+				R6 ← π ProductName, SellPrice (R5)
 
 			9. Lấy ra sản phẩm có giá bán cao nhất.
 				σ SellPrice = max(SellPrice) (Product) (Product)
 
 			10. Lấy ra tổng tiền (Quantity * SellPrice) của mỗi chi tiết hoá đơn với ngày bán là 30/04/2020.
-				R1 = InvoiceLine ⋈ Invoice
-				R2 = R1 ⋈ Product
-				R3 = σ SellDate = "30/04/2020" (R2)
-				R4 = π (Quantity * SellPrice) -> TotalPrice (R3)
+				R1 ← InvoiceLine ⋈ Invoice
+				R2 ← R1 ⋈ Product
+				R3 ← σ SellDate = "30/04/2020" (R2)
+				R4 ← π (Quantity * SellPrice) -> TotalPrice (R3)
+
+
+	2. Cho lược đồ CSDL dùng để quản lý hồ sơ sinh viên gồm các bảng:
+
+		SinhVien (MaSV, HoTenSV, GioiTinh, NgaySinh, MaLop, HocBong)
+		Lop (MaLop, TenLop, SiSo, MaKhoa)
+		Khoa (MaKhoa, TenKhoa, SoLuongGiangVien)
+		MonHoc (MaMH, TenMH, SoTietHoc)
+		KetQua (MaSV, MaMH, DiemThi)
+
+		Hãy thực hiện các câu hỏi sau bằng ngôn ngữ ĐSQH:
+
+			1. Lập danh sách sinh viên gồm MaSV, HoTenSV, HocBong
+				π (MaSV, HoTenSV, HocBong) (SinhVien)
+
+			2. Lập phiếu điểm gồm các thông tin MaSV, HoTenSV, TenMH, DiemThi cho sinh viên có MaSV = "0001"
+
+				* Phức tạp:
+				SV001	← σ (MaSV = "0001") (SinhVien)
+				TTSV	← π (MaSV, HoTenSV) (SV)
+				MaMon	← π (MaMH, TenMH) (MonHoc)
+				KQMaSV	← KetQua * (KetQua.MaSV = TTSV.MaSV) TTSV
+				KQVaMM	← KQMaSV * (KQMaSV.MaMH = MaMon.MaMH) MaMon
+				π (MaSV, HoTenSV, TenMH, DiemThi) (KQVaMM)
+
+				* Đơn giản:
+				R1 ← σ (MaSV = "0001") (SinhVien * KetQua)
+				R2 ← π (MaSV, HoTenSV, TenMH, DiemThi) (R1)
+				π (MaSV, HoTenSV, TenMH, DiemThi) (R2 * MonHoc)
+
+			3. Lập danh sách gồm các thông tin MaSV, HoTenSV, HocBong cho các sinh viên nữ của khoa có mã là "CNTT"
+
+				* Phức tạp:
+				ChonMaKhoa	← σ (MaKhoa = "CNTT") (Lop)
+				ChieuTTMaLop	← π MaLop (Lop)
+				SinhVienNu	← σ (GioiTinh = "Nu") (SinhVien)
+				DSNuSVCNTT	← SinhVienNu * (SinhVienNu.MaLop = ChieuTTMaLop.MaLop) ChieuTTMaLop
+				π (MaSV, HoTenSV, HocBong) (DSNuSVCNTT)
+
+				* Đơn giản:
+				R1 ← π MaLop (σ (MaKhoa = "CNTT") (Lop))
+				π (MaSV, HoTenSV, HocBong) (σ (GioiTinh = "Nu") (R1 * SinhVien))
+
+			4. Lập bảng điểm gồm các thông tin MaSV, HoTenSV, TenMH, DiemThi cho tất cả sinh viên khoa (tên) Công nghệ thông tin".
+
+				* Phức tạp:
+				KhoaCNTT	← σ (TenKhoa = "CNTT") (Khoa)
+				MaKhoaCNTT	← π (MaKhoa) (KhoaCNTT)
+				ChieuTTMaLop	← π (MaLop, MaKhoa) (Lop)
+				ChonMaLop	← ChieuTTMaLop * (ChieuTTMaLop.MaKhoa = MaKhoaCNTT.MaKhoa) MaKhoaCNTT
+				SinhVienCNTT	← SinhVien * (SinhVien.MaLop = ChonMaLop.MaLop) ChonMaLop
+				ChieuTTSVCNTT	← π (MaSV, HoTenSV) (SinhVienCNTT)
+				KetQuaSVCNTT	← ChieuTTSVCNTT * (ChieuTTSVCNTT.MaSV = KetQua.MaSV) KetQua
+				ChieuTTMonHoc	←  π (MaMH, TenMH) (MonHoc)
+				KetQuaKemMaMH	← KetQuaSVCNTT * (KetQuaSVCNTT.MaMH = ChieuTTMonHoc.MaMH) ChieuTTMonHoc
+				π (MaSV, HoTenSV, TenMH, DiemThi) (KetQuaKemMaMH)
+
+				* Đơn giản:
+				R1 ← π (MaKhoa) (σ (TenKhoa = "CNTT") (Khoa))
+				R2 ← π MaLop (R1 * Lop)
+				R3 ← π (MaSV, HoTenSV) (R2 * SinhVien)
+				R4 ← (R3 * KetQua)
+				π (MaSV, HoTenSV, TenMH, DiemThi) (R4 * MonHoc)
+
+			5. Lập danh sách sinh viên của lớp có mã là "CS01" và có điểm thi môn "CSDL" ≥ 8
+				SinhVienLopAT10	← σ (MaLop = "CS01") (SinhVien)
+				TTMonCSDL	← σ (TenMH = "CSDL") (MonHoc)
+				MaMonCSDL	← π MaMH (TTMonCSDL)
+				MonHocVaKetQua	← MaMonCSDL * (MaMonCSDL.MaMH = KetQua.MaMH) KetQua
+				KQDiemThiTren8	← σ (DiemThi ≥ 8) (MonHocVaKetQua)
+				SVCS01CSDLTren8	← SinhVienLopAT10 * (SVCS01CSDLTren8.MaSV = KQDiemThiTren8.MaSV) KQDiemThiTren8
+
+			6. Lập danh sách gồm các thông tin MaSV, HoTenSV cho các sinh viên đã thi hết tất cả các môn học.
+
+				* Phức tạp:
+				ChieuMaMH	← π MaMH (MonHoc)
+				ChieuKetQua	← π (MaSV, MaMH) (KetQua)
+				MaSVThiHetCacMH	← ChieuKetQua ÷ ChieuMaMH
+				LayTTSVDaThiHet	← MaSVThiHetCacMH * (MaSVThiHetCacMH.MaSV = SinhVien.MaSV) SinhVien
+				π (MaSV, HoTenSV) (LayTTSVDaThiHet)
+
+				* Đơn giản:
+				R1 ← π MaMH (MonHoc)
+				R2 ← π (MaSV, MaMH) (KetQua)
+				π (MaSV, HoTenSV) ((R2 ÷ R1) * SinhVien)
+
+			7. Lập danh sách sinh viên của lớp IM01 thi lại môn CSDL.
+
+			8. Lập danh sách gồm các thông tin MaSV, HoTenSV, TenMonThi (TenMH) của các sinh viên còn thiếu ít nhất một môn học chưa thi.
+
+				* Phức tạp:
+				ChieuMaMH	← π MaMH (MonHoc)
+				ChieuKetQua	← π (MaSV, MaMH) (KetQua)
+				MaSVThiHetCacMH	← ChieuKetQua ÷ ChieuMaMH
+				MaSVCuaTatCaSV	← π MaMH (SinhVien)
+				SVCoMonChuaThi	← MaSVCuaTatCaSV - MaSVThiHetCacMH
+				LayLaiTTSV	← SVCoMonChuaThi * SinhVien
+				LayMaVaTenSV	← π (MaSV, HoTenSV) (SinhVien)
+				LayTenMH	← ChieuKetQua * (ChieuKetQua.MaMH = MonHoc.MaMH) MonHoc
+				KQSVMonChuaThi	← LayMaVaTenSV * (LayMaVaTenSV.MaSV = LayTenMH.MaSV) LayTenMH
+				π (MaSV, HoTenSV, TenMH) (KQSVMonChuaThi)
+
+				* Đơn giản:
+				R1 ← π MaMH (MonHoc)
+				R2 ← π (MaSV, MaMH) (KetQua)
+				R3 ← π (MaSV, HoTenSV) ((R2 ÷ R1) * SinhVien)
+				R4 ← π (MaSV, HoTenSV) (SinhVien)
+				R5 ← R4 − R3
+				R6 ← π (MaSV, TenMH) (R2 * MonHoc)
+				π (MaSV, HoTenSV, TenMH) (R5 * R6)
+				
 
 --------------------
 
-Các phép toán ĐSQH cơ bản sẽ không thể thực hiện được một số thao tác thống kê, báo cáo,  tổng hợp, tóm tắt dữ liệu từ các bảng,...
+Các phép toán ĐSQH cơ bản sẽ không đủ để thực hiện được một số thao tác phổ biến như: thống kê, báo cáo, tổng hợp, tóm tắt dữ liệu từ các bảng,...
 
 * Các phép toán quan hệ bổ sung (Additional Relational Operations):
-	- Hàm tập hợp (Aggregate Function):
-	- Phép gom nhóm các dòng (Grouping):
-	- Phép kết mở rộng (OUTER JOIN):
-	- Phép hội mở rộng (OUTER UNION):
+	- Phép chiếu tổng quát (Generalized Projection).
+	- Hàm tập hợp/ kết hợp (Aggregate Function).
+	- Phép gom nhóm các dòng (Grouping).
+	- Phép kết mở rộng (OUTER JOIN).
+	- Phép hội mở rộng (OUTER UNION).
 
 ----------
+
+	1. Phép chiếu tổng quát (Generalized Projection): Bổ sung thêm các hàm (tính toán) vào các cột.
+
+		* Công thức: π <hàm₁, hàm₂, ..., hàmₙ> (R)
+
+			- Ngoài việc chiếu để lựa ra các cột, ta còn có thể thực hiện các phép toán trên các cột đã chiếu.
+
+			- Các biểu thức hoặc phép toán được áp dụng lên các thuộc tính có thể bao gồm: các toán tử số học, các giá trị hằng,...
+
+			- Ngoài việc thay đổi trực tiếp lên cột đã chiếu, ta còn có thể sử dụng các cột sẵn có để tạo ra một cột mới.
+				+ Kết quả sẽ là các thuộc tính mới và không hề có tên.
+				+ Vì vậy, có thể sử dụng thêm phép đôi tên để đặt tên cho các thuộc tính mới này.
+
+			Ví dụ: Tính lương và thời gian làm việc của một nhân viên có lược đồ NhanVien (MaNV, TenNV, LuongCoBan, PhuCap, Thue, NgayVaoLam).
+
+				LuongNV ← π (MaNV, TenNV, (LuongCoBan + PhuCap + (YEAR(GETDATE()) - YEAR(NgayVaoLam)) * 1,000,000)) (NhanVien)
+
+				ρ (MaNV, TenNV, LuongThang) (LuongNV)
+
+				- Công thức để tính lương tháng là: Lương cơ bản + phụ cấp + thưởng theo số năm làm viêc (số năm * 1,000,000).
+
+				- Tạo ra một cột mới để tính lương tháng, sau khi tính toán xong thì có thể dùng phép đổi tên.
+
+	2.1. Hàm tập hợp/ kết hợp (Aggregate Function): Thường được dùng trong các truy vấn thống kê, tóm tắt thông tin từ các dòng trong bảng.
+
+		- Nhận vào một tập các giá trị - tập hợp dữ liệu (collection), nhưng chỉ trả về một giá trị duy nhất.
+			+ Giá trị nhận vào có thể là một cột hoặc một biểu thức gồm nhiều cột.
+
+		- Gồm các hàm để tương tác với các tập dữ liệu là kiểu số:
+			+ SUM(): Tính tổng các giá trị trong tập hợp.
+			+ AVG(): Tính giá trị trung bình của các giá trị trong tập hợp.
+			+ MAX(): Tìm giá trị lớn nhất trong tập hợp.
+			+ MIN(): Tìm giá trị nhỏ nhất trong tập hợp.
+
+		- Hàm để đếm số dòng của một bảng hoặc số giá trị của một cột:
+			+ COUNT()
+
+	2.2. Phép gom nhóm các dòng (Grouping): Thường được dùng để chia một bảng thành nhiều nhóm dựa trên điều kiện.
+
+		* Công thức: <danh-sách-cột> ℑ <danh-sách-hàm> (R)
+	
+			- Thường được dùng chung với các hàm tập hợp.
+				+ Gom nhóm các dòng theo các cột, các dòng cùng nhóm sẽ có giá trị giống nhau trên cột đó.
+				+ Sau đó áp dụng các hàm tập hợp riêng biệt lên từng nhóm.
+
+			- Nếu không có cột nào được liệt kê trong danh sách cột, nghĩa là không chia nhóm (chỉ có 1 nhóm lớn).
+
+			Ví dụ 1: Cho lược đồ quan hệ NhanVien (MaNV, TenNV, NgaySinh, Luong, GioiTinh, MaPB).
+
+				- Tính tổng số nhân viên và mức lương trung bình của tất cả các nhân viên trong công ty.
+				
+					ℑ (COUNT(MaNV), AVG(Luong)) (NhanVien)
+
+				- Với mỗi phòng ban, cho biết mã phòng ban, tổng số nhân viên và mức lương trung bình của phòng đó.
+
+					// Phân nhóm nhân viên theo phòng ban
+					NV ← MaPB ℑ (COUNT(MaNV), AVG(Luong)) (NhanVien)
+					ρ (MaPB, SoNV, LuongTB) (NV)
+
+			Ví dụ 2:
+				- Tìm điểm thi cao nhất và thấp nhất, tính điểm trung bình của môn CSDL.
+					ℑ (MAX(Diem), MIN(Diem), AVG(Diem)) σ (MaMH = 'CSDL') (KetQuaThi)
+
+				- Tìm điểm thi cao nhất và thấp nhất, tính điểm trung bình của từng môn.
+					MaMH ℑ (MAX(Diem), MIN(Diem), AVG(Diem)) (KetQuaThi)
+
+	3. Phép kết ngoại (Outer join): Sau khi chỉ lấy những dòng chung, vẫn muốn giữ lại những dòng riêng của các bên.
+		- Giúp tránh việc mất mát dữ liệu, không thể vì một bên không có dữ liệu mà bên còn lại cũng bị mất dữ liệu theo.
+		- Dòng dữ liệu của bên có dữ liệu vẫn giữ nguyên, tự động điền (padding) giá trị NULL cho các dòng không có dữ liệu.
+
+		-> Vẫn giữ lại những dòng "cô đơn" (không thoả điều kiện để ghép cặp) thay vì bị tự động loại bỏ.
+
+		3.1. Phép kết ngoại bên trái (Left outer join / Left join): Trả về tất cả dòng từ bảng bên trái và các dòng tương ứng từ bảng bên phải (hoặc NULL nếu không có kết hợp).
+		
+			* Công thức: R ⟕ <điều-kiện-kết-nối> S
+
+				- Lấy bảng bên trái để làm mốc / làm chuẩn.
+					+ Chung của cả hai.
+					+ Riêng của bên trái.
+					+ Bên phải mặc định là NULL.
+
+				- Trong SQL:
+					SELECT *
+					FROM table1
+					LEFT OUTER JOIN table2
+					ON table1.column = table2.column
+
+				Ví dụ:
+
+					NhanVien		PhongBan
+					-------------------	-------------------
+					| TenNV    | MaPB |	| MaPB | TenPB    |
+					|----------+------|	|------+----------|
+					| An	   | PB34 |	| PB31 | Ban hang |
+					| Son	   | PB33 |	| PB33 | CNTT     |
+					| Thuy	   | PB34 |	| PB34 | Nhan su  |
+					| Mai	   | NULL |	| PB35 | Tiep thi |
+					| Long	   | PB33 |	-------------------
+					| Dung	   | PB31 |
+					-------------------
+
+					- ĐSQH: NhanVien ⟕ (NhanVien.MaPB = PhongBan.MaPB) PhongBan
+					- SQL:
+						SELECT *
+						FROM NhanVien 
+						LEFT OUTER JOIN PhongBan
+						ON NhanVien.MaPB = PhongBan.MaPB
+					------------------------------------------
+					| TenNV    | NV.MaPB | PB.MaPB| TenPB    |
+					|----------+---------+--------+----------|
+					| An	   | PB34    | PB34   | Nhan su  |
+					| Son	   | PB33    | PB33   | CNTT     |
+					| Thuy	   | PB34    | PB34   | Nhan su  |
+					| Mai	   | NULL    | NULL   | NULL     |
+					| Long	   | PB33    | PB33   | CNTT     |
+					| Dung	   | PB31    | PB31   | Ban hang |
+					------------------------------------------
+
+		3.2. Phép kết ngoại bên phải (Right outer join / Right join): Trả về tất cả các dòng từ bảng bên phải và các dòng tương ứng từ bảng bên trái (hoặc NULL nếu không có kết hợp).
+		
+			* Công thức: R ⟖ <điều-kiện-kết-nối> S
+
+				- Lấy bảng bên phải để làm mốc / làm chuẩn.
+					+ Chung của cả hai.
+					+ Riêng của bên phải.
+					+ Bên trái mặc định là NULL.
+
+				- Trong SQL:
+					SELECT *
+					FROM table1
+					RIGHT OUTER JOIN table2
+					ON table1.column = table2.column
+
+				Ví dụ:
+
+					NhanVien		PhongBan
+					-------------------	-------------------
+					| TenNV    | MaPB |	| MaPB | TenPB    |
+					|----------+------|	|------+----------|
+					| An	   | PB34 |	| PB31 | Ban hang |
+					| Son	   | PB33 |	| PB33 | CNTT     |
+					| Thuy	   | PB34 |	| PB34 | Nhan su  |
+					| Mai	   | NULL |	| PB35 | Tiep thi |
+					| Long	   | PB33 |	-------------------
+					| Dung	   | PB31 |
+					-------------------
+
+					- ĐSQH: NhanVien ⟖ (NhanVien.MaPB = PhongBan.MaPB) PhongBan
+					- SQL:
+						SELECT *
+						FROM NhanVien 
+						RIGHT OUTER JOIN PhongBan
+						ON NhanVien.MaPB = PhongBan.MaPBe
+					------------------------------------------
+					| TenNV    | NV.MaPB | PB.MaPB| TenPB    |
+					|----------+---------+--------+----------|
+					| An	   | PB34    | PB34   | Nhan su  |
+					| Son	   | PB33    | PB33   | CNTT     |
+					| Thuy	   | PB34    | PB34   | Nhan su  |
+					| Long	   | PB33    | PB33   | CNTT     |
+					| Dung	   | PB31    | PB31   | Ban hang |
+					| NULL	   | NULL    | PB35   | Tiep thi |
+					------------------------------------------
+
+		3.3. Phép kết ngoại đủ (Full outer join / FULL JOIN): Trả về tất cả các dòng từ cả hai bảng, bảng bên trái và bảng bên phải (hoặc NULL nếu không có kết hợp).
+		
+			* Công thức: R ⟗ <điều-kiện-kết-nối> S
+
+				- Không còn quan trọng bên nào làm mốc / làm chuẩn.
+					+ Chung của cả hai.
+					+ Riêng của mỗi bên.
+
+				- Trong SQL:
+					SELECT *
+					FROM table1
+					FULL OUTER JOIN table2
+					ON table1.column = table2.column
+
+				- Trong một số HQTCSDL, nếu phép kết ngoại đủ không được hỗ trợ, ta có thể sử dụng phép hội để nối hai bảng riêng biệt mà trước đó đã áp dụng hai phép kết ngoại bên trái và phải.
+
+				Ví dụ:
+
+					NhanVien		PhongBan
+					-------------------	-------------------
+					| TenNV    | MaPB |	| MaPB | TenPB    |
+					|----------+------|	|------+----------|
+					| An	   | PB34 |	| PB31 | Ban hang |
+					| Son	   | PB33 |	| PB33 | CNTT     |
+					| Thuy	   | PB34 |	| PB34 | Nhan su  |
+					| Mai	   | NULL |	| PB35 | Tiep thi |
+					| Long	   | PB33 |	-------------------
+					| Dung	   | PB31 |
+					-------------------
+
+					- ĐSQH: NhanVien ⟗ (NhanVien.MaPB = PhongBan.MaPB) PhongBan
+					- SQL:
+						SELECT *
+						FROM NhanVien 
+						FULL OUTER JOIN PhongBan
+						ON NhanVien.MaPB = PhongBan.MaPB
+					------------------------------------------
+					| TenNV    | NV.MaPB | PB.MaPB| TenPB    |
+					|----------+---------+--------+----------|
+					| An	   | PB34    | PB34   | Nhan su  |
+					| Son	   | PB33    | PB33   | CNTT     |
+					| Thuy	   | PB34    | PB34   | Nhan su  |
+					| Mai	   | NULL    | NULL   | NULL     |
+					| Long	   | PB33    | PB33   | CNTT     |
+					| Dung	   | PB31    | PB31   | Ban hang |
+					| NULL	   | NULL    | PB35   | Tiep thi |
+					------------------------------------------
 
 ----------------------------------------
 
@@ -3333,7 +3697,7 @@ Các phép toán ĐSQH cơ bản sẽ không thể thực hiện được một 
 
 --------------------
 
-	1. Phép bổ sung / chèn (Insert): Thêm một dòng dữ liệu (t) vào bảng (r), kí hiệu là: r = r ∪ t.
+	1. Phép bổ sung / chèn (Insert): Thêm một dòng dữ liệu (t) vào bảng (r), kí hiệu là: rₙ = rₒ ∪ t.
 
 		* Kí hiệu:
 					       Tên bảng		Giá trị trong miền giá trị
@@ -3362,7 +3726,7 @@ Các phép toán ĐSQH cơ bản sẽ không thể thực hiện được một 
 
 --------------------
 
-	2. Phép loại bỏ (Delete): Xoá một dòng dữ liệu (t) khỏi bảng (r), kí hiệu là: r = r - t.
+	2. Phép loại bỏ (Delete): Xoá một dòng dữ liệu (t) khỏi bảng (r), kí hiệu là: rₙ = rₒ - t.
 
 		* Kí hiệu:
 
@@ -3398,7 +3762,7 @@ Các phép toán ĐSQH cơ bản sẽ không thể thực hiện được một 
 
 --------------------
 
-	3. Phép Thay đổi (Update / Change): Thay đổi một hoặc nhiều giá trị (không phải toàn bộ giá trị) của một dòng dữ liệu (t) trong bảng (r), kí hiệu là: r = (r \ t) ∪ tʼ.
+	3. Phép Thay đổi (Update / Change): Thay đổi một hoặc nhiều giá trị (không phải toàn bộ giá trị) của một dòng dữ liệu (t) trong bảng (r), kí hiệu là: rₙ = (rₒ \ t) ∪ tʼ.
 
 		* Kí hiệu:
 
@@ -3438,6 +3802,50 @@ Các phép toán ĐSQH cơ bản sẽ không thể thực hiện được một 
 			- Cách 1: CH (KetQua; #̲M̲S̲S̲V̲ = SV001, #̲M̲M̲H̲ = CSDL, DiemSoMH = 7; #̲M̲S̲S̲V̲ = SV001, #̲M̲M̲H̲ = CSDL, DiemSoMH = 8)
 
 			- Cách 2: CH (PhongBan; #̲M̲S̲S̲V̲ = SV001, #̲M̲M̲H̲ = CSDL; DiemSoMH = 8)
+
+----------------------------------------
+
+	[PHÉP TOÁN QUAN HỆ - RELATIONAL CALCULUS]
+
+* Phép toán quan hệ (Relational Calculus):
+
+	- Được xem là ngôn ngữ phi thủ tục vì chỉ cần viết biểu thức khai báo (declarative expression) để đưa ra yêu cầu.
+		+ Tập trung vào mô tả điều kiện logic mà dữ liệu phải thỏa mãn.
+		+ Không cần mô tả cách thức hoặc thứ tự thực hiện các truy vấn.
+
+	- Sử dụng các phép toán vị từ (predicate).
+		+ Là 1 hàm đối số nằm ở phía sau để diễn đạt điều người dùng muốn.
+		+ Chỉ trả về hai kết quả đúng hoặc sai.
+
+		* Có hai loại phép toán vị từ trên CSDL:
+			1. Phép toán trên dòng (Tuple Relational Calculus).
+			2. Phép toán trên cột (Domain Relational Calculus).
+
+--------------------
+
+	1. Phép toán trên dòng (Tuple Relational Calculus):
+
+		- Tìm ra các dòng giúp vị từ có giá trị đúng.
+
+		- Sử dụng các biến trên bộ để tìm.
+			+ Là biến nhận giá trị là 1 dòng của bảng.
+
+		Ví dụ:
+			Lập danh sách các nhân viên có lương trên 10tr.
+				- Đại số quan hệ: σ (salary > 10,000,000) (Staff)
+				- Phép toán quan hệ trên dòng: {S | Staff(S) ∧ S.salary > 10,000,000}
+
+			Lập danh sách các nhân viên có lương trên 10tr, nhưng chỉ bao gồm 1 cột lương trong danh sách.
+				- Đại số quan hệ: π salary (σ (salary > 10,000,000) (Staff))
+				- Phép toán quan hệ trên dòng: {S.salary | Staff(S) ∧ S.salary > 10,000,000}
+
+			Lập danh sách các nhân viên có tên là Mark, nhưng chỉ bao gồm tên, ngày sinh và địa chỉ của nhân viên.
+				- Đại số quan hệ: π name, birthDate, homeAddress (σ (name = 'Mark') (Staff))
+				- Phép toán quan hệ trên dòng: {S.name, S.birthDate, S.homeAddress | Staff(S) ∧ S.name = 'Mark'}
+
+		- Có thể sử dụng thêm các lượng từ (quatifier) để cho biết vị từ sẽ được áp dụng trên bao nhiêu dòng.
+			+ Tồn tại (∃): Đảm bảo trong công thức có ít nhất 1 giá trị dụng.
+			+ Với mọi (∀):
 
 --------------------------------------------------------------------------------
 
