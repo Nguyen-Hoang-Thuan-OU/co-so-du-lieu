@@ -344,7 +344,7 @@ Những nhóm người sử dụng cơ sở dữ liệu:
 
 		3.2. Người sử dụng thường xuyên (Naive / Parametric End User): Thường xuyên phải sử dụng CSDL nhưng không yêu cầu phải có những hiểu biết về HQTCSDL, có thể sử dụng thông qua giao diện của một ứng dụng nào đó.
 
-		3.3. Người sử dụng đặc biệt (Sophisticated User): Người có kiến thức sâu rộng về CSDL (ví dụ: BA, nhà khoa học,...) và có thể sử dụng SQL để tương tác với HQTCSDL để truy vấn phức tạp.
+		3.3. Người sử dụng đặc biệt (Sophisticated User): Người có kiến thức sâu rộng về CSDL (ví dụ: BA, nhà khoa học,...) và có thể sử dụng SQL để tương tác với HQTCSDL và thực hiện những truy vấn phức tạp.
 
 		3.4. Người sử dụng cá nhân (Stand-alone User): Người sử dụng các ứng dụng để phục vụ công việc cá nhân (ví dụ: quản lý thuế cá nhân, quản lý bảo hiểm xã hội,...).
 
@@ -448,6 +448,7 @@ Vì là một phần mềm nên Database Engine (HQTCSDL) còn hỗ trợ:
 
 			- BINARY: Kích thước tối đa 8000 kí tự.
 			- VARBINARY: Kích thước tối đa 8000 kí tự.
+			- IMAGE
 
 			- CHAR: Kích thước tối đa 8000 kí tự.
 				+ Xin bao nhiêu, cấp cố định bấy nhiêu.
@@ -472,34 +473,38 @@ Vì là một phần mềm nên Database Engine (HQTCSDL) còn hỗ trợ:
 			- NTEXT:  Kích thước tối đa 1.073.741.823 byte.
 				+ Không cần thiết phải chỉ định kích thước tối đa.
 				+ Cho phép lưu trữ nhiều đoạn văn (nhiều câu).
-			- IMAGE
 
 		* Kiểu số:
 
+			* Số chính xác (Exact numeric):
 			- BIT: Chỉ bao gồm 0, 1 hoặc NULL.
-			- DECIMAL (precision, scale): Là một kiểu số thực.
-				+ Độ chính xác (precision): Tổng số chữ số (1..38) sẽ có, bao gồm cả dấu chấm/ phẩy.
-				+ Tỷ lệ (scale): Số chữ số bên phải dấu chấm thập phân.
-			- NUMERIC
-			- FLOAT
-			- REAL
-			- TINYINT: Từ 0 .. 255.
-			- SMALLINT: Từ -32.768 .. 32.767.
-			- INT: Từ -2.147.483.648 .. 2.147.483.647.
-			- BIGINT
+			- TINYINT: Từ 0..255 (1 byte).
+			- SMALLINT: Từ -32.768..32.767 (2 byte).
+			- INT: Từ -2.147.483.648..2.147.483.647 (4 byte).
+			- BIGINT: (8 byte).
 			- MONEY
 			- SMALLMONEY
+			- DECIMAL (precision, scale): Là một kiểu số thực, nhưng vẫn được xem là số chính xác vì chúng không làm tròn.
+				+ Độ chính xác (precision): Tổng số chữ số (1..38) sẽ có, bao gồm cả dấu chấm/ phẩy.
+				+ Tỷ lệ (scale): Số chữ số bên phải dấu chấm thập phân, mặc định là 0.
+			- NUMERIC
+
+			* Số gần đúng (Approximate numeric):
+			- FLOAT
+			- REAL
 
 		* Kiểu ngày & giờ:
 
 			- DATE: Có định dạng là yyyy-MM-dd.
 			- DATETIME: Có định dạng là yyyy-MM-dd hh:mm:ss[.mmm].
+				+ Phạm vi ngày: 01/01/1753..31/12/9999.
+				+ Phạm vi thời gian: 00:00:00..23:59:59.997.
 			- DATETIME2
 			- DATETIMEOFFSET
 			- SMALLDATETIME
+				+ Phạm vi ngày: 01/01/1900..06/06/2079.
+				+ Phạm vi thời gian: 00:00:00..23:59:59.
 			- TIME: Có định dạng là hh:mm:ss.
-
-		(* Tham khảo thêm: https://youtu.be/JitD06kpNpI?si=zA1HDIiIST8pcGGJ&t=479 - Cô Võ Thị Hồng Tuyết - Thực hành tạo bảng và mỗi quan hệ trên SQL Server)
 
 	3. Hàm (Function): có cung một số hàm đã được xây dựng sẵn và chỉ trả về giá trị, ta chỉ việc gọi lên để sử dụng.
 
@@ -604,14 +609,14 @@ Tuỳ thuộc vào dữ liệu, loại ngôn ngữ lập trình và ứng dụng
 
 * Ngôn ngữ quan hệ (Relational Language): Là ngôn ngữ được sử dụng để truy vấn và thao tác với dữ liệu trong CSDL quan hệ (dữ liệu trong dòng và cột của bảng).
 
-	- Đại số quan hệ (Relational Algebra) và Phép toán quan hệ (Relational Calculus) là hai dạng chính của ngôn ngữ quan hệ.
+	- Đại số quan hệ (Relational Algebra) và Phép tính quan hệ (Relational Calculus) là hai dạng chính của ngôn ngữ quan hệ.
 
-		+ Đại số quan hệ (Relational Algebra): Được sử dụng để thực hiện các phép toán trên dữ liệu.
+		+ Đại số quan hệ (Relational Algebra): Được sử dụng để thực hiện các phép toán trên dữ liệu, bao gồm cả chi tiết về cách thức và thứ tự để thực hiện truy vấn.
 
 			Ví dụ: Tìm tất cả tựa sách xuất bản năm 2000.
 				π (Book name) ( σ (yr_pub = 2000) (book) )
 
-		+ Phép toán quan hệ (Relational Calculus): Được sử dụng để mô tả điều kiện cụ thể mà dữ liệu cần thỏa mãn để trích xuất, không quan tâm thứ tự thực hiện truy xuất mà chỉ quan tâm kết quả.
+		+ Phép tính quan hệ (Relational Calculus): Được sử dụng để mô tả điều kiện cụ thể mà dữ liệu cần thỏa mãn để trích xuất, không quan tâm thứ tự thực hiện truy xuất mà chỉ quan tâm kết quả.
 
 			Ví dụ: Tìm tất cả tựa sách xuất bản năm 2000.
 				S = { t | ∃ u ∈  book (t[book name] = u[book name]) ∧ (u[yr_pub] = 2000 ) }
@@ -623,13 +628,13 @@ Tuỳ thuộc vào dữ liệu, loại ngôn ngữ lập trình và ứng dụng
 * Structured Query Language (SQL): Là một trong những ngôn ngữ truy vấn (hỏi/đáp, thao tác) cơ sở dữ liệu quan hệ phổ biến nhất, được sáng chế bởi IBM vào những năm 1970.
 
 	- Là ngôn ngữ được sử dụng rộng rãi để quản lý cơ sở dữ liệu quan hệ.
-		+ Gồm những câu lệnh cho phép tương tác với chính cấu trúc của cơ sở dữ liệu bằng các lệnh: Tạo mới, thêm-sửa, xoá... bảng (Table) trong cơ sở dữ liệu.
+		+ Gồm những câu lệnh cho phép tương tác với chính cấu trúc của cơ sở dữ liệu bằng các lệnh: Tạo mới, thêm-sửa, xoá... bảng (Table) và thiết lập mối quan hệ giữa các bảng.
 		+ Ngoài ra, SQL còn giúp giao tiếp với Server để xem-thêm-sửa-xoá... khai thác dữ liệu bên trong các bảng của một cơ sở dữ liệu quan hệ.
 		+ Và còn nhiều câu lệnh khác để thực hiện những công việc có liên quan như: gán và gỡ quyền truy cập vào dữ liệu, sao lưu và phục hồi dữ liệu,...
 
 	- Là một ngôn ngữ dữ liệu, nhưng tuỳ thuộc vào ngữ cảnh sử dụng mà có thể là ngôn ngữ thủ tục hoặc phi thủ tục.
 
-	- Người dùng sẽ gõ những câu lệnh ở dạng văn bản, sau đó Client sẽ chịu trách nhiệm mã hoá và chuyển sang cho Server để Server xử lý và trả kết quả lại về cho người dùng.
+	- Người dùng sẽ viết những câu lệnh ở dạng văn bản, sau đó Client sẽ chịu trách nhiệm mã hoá và chuyển sang cho Server để Server xử lý và trả kết quả lại về cho người dùng.
 
 	- Ban đầu, khi tạo ra ngôn ngữ này, IBM đặt tên nó là SEQUEL (viết hoa tất cả).
 		+ Là viết tắt của cụm từ Structured English Query Language (Ngôn ngữ truy vấn tiếng Anh có cấu trúc).
@@ -1928,7 +1933,7 @@ Các bảng (Table) trong CSDL quan hệ giống như lớp (Class) và những 
 
 ----------
 
-// Định nghĩa nội dung:
+// Định nghĩa nội dung (Practical):
 
 	- Lược đồ quan hệ (Table Schema / Relation Schema): Cấu trúc các bảng ở mức ý niệm.
 		+ Giàn khung (đặc điểm / thuộc tính / biến) chưa có dữ liệu.
@@ -1960,7 +1965,7 @@ Các bảng (Table) trong CSDL quan hệ giống như lớp (Class) và những 
 
 ----------
 
-// Định nghĩa hình thức (toán tập hợp):
+// Định nghĩa hình thức (Formal) - Toán tập hợp:
 
 	- Một lược đồ quan hệ (R) chứa bên trong một tập thuộc tính {A₁, A₂,..., Aₙ}, kí hiệu là: R (A₁, A₂,..., Aₙ).
 
@@ -2008,21 +2013,43 @@ Các bảng (Table) trong CSDL quan hệ giống như lớp (Class) và những 
 
 ----------
 
-Tất cả các giá trị trong cùng một cột phải đến từ một miền giá trị.
-	- Mặc định, hầu hết các kiểu dữ liệu đều bao gồm một giá trị được biệt được gọi là giá trị NULL.
-	- Đây là giá trị thứ ba, còn được gọi là UNKNOWN, bên cạnh hai giá trị TRUE và FALSE trong thuyết 3 giá trị luận lý (three-valued logic / three truth values).
-	- Nếu giá trị trong một ô trả về NULL (có màu vàng), sẽ được hiểu là không có hoặc chưa xác định được (tạm thời để bằng NULL, đến khi biết thì sẽ có những cập nhật sau trong tương lai).
+		[GIÁ TRỊ NULL]
 
-	Ví dụ: khi sinh viên kí tên vào danh sách thi, cột điểm ở thời điểm kí tên đang tạm thời là NULL - mang trạng thái chưa xác định.
+Tất cả các giá trị trong cùng một cột phải đến từ một miền giá trị.
+
+	- Mặc định, hầu hết các kiểu dữ liệu đều bao gồm một giá trị được biệt được gọi là giá trị NULL.
+
+	- Đây là giá trị thứ ba, còn được gọi là UNKNOWN, bên cạnh hai giá trị TRUE và FALSE trong thuyết 3 giá trị luận lý (three-valued logic / three truth values).
+
+Nếu giá trị trong một ô trả về NULL (có màu vàng), sẽ được hiểu theo nhiều cách khác nhau:
+
+	1. Không xác định được (Unknown value): Không biết đến sự tồn tại hoặc biết có tồn tại nhưng không biết do không có ai cung cấp thông tin.
+
+		Ví dụ:
+			- Một mối quan hệ mập mờ, không rõ liệu một người có thích mình hay không (không biết có tồn tại tình cảm hay không).
+			- Vừa thi xong, chắc chắn sẽ có điểm, nhưng giảng viên chưa chấm bài và chưa công bố điểm nên không biết điểm bao nhiêu.
+
+	2. Bị che giấu/ Không khả dụng (Withheld/ Unavailable value): Chắc chắn có, nhưng không công bố vì một mục đích nào đó (cố ý che giấu).
+
+		Ví dụ:
+			- Một người chắc chắn có năm sinh, nhưng họ muốn che giấu thông tin này.
+			- Một bệnh nhân không muốn tiết lộ thông tin về nhóm máu của mình.
+
+	3. Vô nghĩa (Inapplicable value): Không có ý nghĩa trong một ngữ cảnh nào đó.
+
+		Ví dụ:
+			- Thông tin về "Số lần mang thai" trong hồ sơ y tế của các bệnh nhân nam là vô nghĩa.
+			- Thông tin về học vị: Cử nhân, Kỹ sư, Thạc sĩ, Tiến sĩ,... là vô nghĩa đối với một Tú tài đã dừng việc học.
 
 	-> NULL đại diện cho một thứ chưa xác định được.
 
-	- Khi thiết kế, nên tránh những giá trị NULL vì nó sẽ gây ra mơ hồ.
-		Ví dụ: Trong cột "Địa chỉ nhà" của bảng "Nhân viên", có hai ô cùng lưu giá trị NULL, ta không thể kết luận hai nhân viên này có cùng địa chỉ được.
+ Khi thiết kế, nên tránh những giá trị NULL vì nó sẽ gây ra mơ hồ.
 
-	- Nếu chưa có giá trị thì cũng không thể sử dụng các toán tử so sánh (>, <, =...)
+	Ví dụ: Trong cột "Địa chỉ nhà" của bảng "Nhân viên", có hai ô cùng lưu giá trị NULL, ta không thể kết luận hai nhân viên này có cùng địa chỉ được.
 
-	- Thay vào đó, ta sẽ sử dụng các toán tử: IS NULL, IS NOT NULL, NOT (Tên bảng IS NULL) để kiểm tra và lọc ra những ô có giá trị là NULL.
+Mỗi giá trị NULL được xem là một giá trị riêng biệt và khác với những giá trị NULL khác.
+	- Không thể sử dụng các toán tử so sánh {>, <, =...}.
+	- Thay vào đó, ta sẽ sử dụng các toán tử: IS NULL, IS NOT NULL, NOT (<Tên bảng> IS NULL) để kiểm tra và lọc ra những ô có giá trị là NULL.
 
 ------------------------------------------------------------
 
@@ -2335,7 +2362,7 @@ Trong đại số quan hệ:
 			- Phép chiếu (PROJECT).
 			- Phép đổi Phép đổi tên (RENAME).
 
-		2. Kết hợp các bảng
+		2. Kết hợp các bảng:
 			- Phép tích Đềcác (CARTESIAN PRODUCT).
 			- Phép kết nối (JOIN).
 
@@ -2577,7 +2604,7 @@ Trên thực tế, có rất nhiều cách để phân loại các phép toán c
 				+ Có cùng số cột (tên cột không cần phải trùng nhau) và vị trí tương ứng.
 				+ Có cùng miền giá trị trong mỗi cột.
 
-				-> Chỉ áp dụng được khi giữa các bảng có tính khả hợp (Union Compatibility / Type Compatibility).
+				-> Chỉ áp dụng được khi giữa các bảng có tính khả hợp/ tương thích (Union Compatibility / Type Compatibility).
 
 			- Kết quả là một bảng mới có cùng tên thuộc tính với bảng thứ nhất và tự động loại bỏ những dòng bị trùng.
 
@@ -2836,7 +2863,7 @@ Trên thực tế, có rất nhiều cách để phân loại các phép toán c
 				* Trong SQL, đây chính là CROSS JOIN.
 					- Được dùng để kết nối hai bảng mà...
 						+ Không cần thiết lập điều kiện kết nối.
-						+ Không cần khả hợp.
+						+ Không cần khả hợp/ tương thích.
 						+ Không cần cột chung.
 						+ ...
 					- Thường được thay thế bằng các phép JOIN khác.
@@ -2869,10 +2896,11 @@ Trên thực tế, có rất nhiều cách để phân loại các phép toán c
 				- Bản chất của JOIN vẫn chỉ là phép tích Đềcác (Phép kết chéo - Cross join).
 					- Nhân từng dòng (cả một dòng) của bảng thứ nhất với từng dòng của bảng thứ hai.
 					- Nhưng có bổ sung thêm các điều kiện so sánh chọn để loại bỏ đi những dòng không hợp lệ và những dòng không mong muốn sau khi nhân.
+					- Trong kết quả sẽ không bao gồm các giá trị NULL, vì NULL không thể dùng các phép toán so sánh thông thường để so sánh.
 
 						-> Tương đương với phép tích Đềcác, nhưng có thêm phép chọn.
 
-					=> Phép kết nội (Inner join): Loại kết nối tự động loại bỏ những dòng không cần thiết.
+					=> Phép kết nội (Inner join): Loại kết nối sẽ tự động loại bỏ những dòng không cần thiết.
 
 				- Có ba loại phép kết nối (JOIN):
 
@@ -3037,7 +3065,7 @@ Trên thực tế, có rất nhiều cách để phân loại các phép toán c
 						- Nếu S có những cột mà R không có thì phải sử dụng phép chiếu để bỏ bớt cột khác nhau, giúp kết quả chia được chính xác hơn.
 
 					- Sẽ tạo ra một bảng mới.
-						+ Số cột sẽ là R − S (bỏ đi cột trùng).
+						+ Số cột sẽ là R − S (chỉ lấy cột của R và bỏ đi cột trùng).
 						+ Số dòng sẽ chỉ gồm những dòng chung của cả hai bảng, nhưng với một số điều kiện:
 							1. Dữ liệu trong các cột chung giữa R và S phải khớp nhau hoàn toàn.
 							2. Dữ liệu trong các cột còn lại của R, dòng nào cũng phải giống hệt nhau.
@@ -3090,6 +3118,8 @@ Trên thực tế, có rất nhiều cách để phân loại các phép toán c
 					- Sinh viên thi những môn có số tín chỉ = 2:
 					R1 ← π MaMH (σ SoTC = 2 (MonHoc))
 					KetQua ÷ R1
+
+				* Trong SQL, không có các từ khoá tương ứng với phép chia trong ĐSQH.
 
 --------------------
 
@@ -3504,6 +3534,8 @@ Các phép toán ĐSQH cơ bản sẽ không đủ để thực hiện được 
 
 		- Nhận vào một tập các giá trị - tập hợp dữ liệu (collection), nhưng chỉ trả về một giá trị duy nhất.
 			+ Giá trị nhận vào có thể là một cột hoặc một biểu thức gồm nhiều cột.
+			+ Những giá trị trùng nhau vẫn sẽ được tính, nhưng không tính những giá trị NULL.
+			+ Vì hàm có trả về giá trị nên ta hoàn toàn có thể đem đi sử dụng và lồng bên trong những câu lệnh khác.
 
 		- Gồm các hàm để tương tác với các tập dữ liệu là kiểu số:
 			+ SUM(): Tính tổng các giá trị trong tập hợp.
@@ -3517,10 +3549,14 @@ Các phép toán ĐSQH cơ bản sẽ không đủ để thực hiện được 
 	2.2. Phép gom nhóm các dòng (Grouping): Thường được dùng để chia một bảng thành nhiều nhóm dựa trên điều kiện.
 
 		* Công thức: <danh-sách-cột> ℑ <danh-sách-hàm> (R)
+
+			(Chưa có kí hiệu thống nhất cho hàm tập hợp, nên đôi khi còn được kí hiệu là: γ,...)
 	
 			- Thường được dùng chung với các hàm tập hợp.
 				+ Gom nhóm các dòng theo các cột, các dòng cùng nhóm sẽ có giá trị giống nhau trên cột đó.
 				+ Sau đó áp dụng các hàm tập hợp riêng biệt lên từng nhóm.
+
+				-> Gom nhóm các dòng giống nhau ở 1 hay nhiều cột.
 
 			- Nếu không có cột nào được liệt kê trong danh sách cột, nghĩa là không chia nhóm (chỉ có 1 nhóm lớn).
 
@@ -3805,25 +3841,28 @@ Các phép toán ĐSQH cơ bản sẽ không đủ để thực hiện được 
 
 ----------------------------------------
 
-	[PHÉP TOÁN QUAN HỆ - RELATIONAL CALCULUS]
+	[PHÉP TÍNH QUAN HỆ - RELATIONAL CALCULUS]
 
-* Phép toán quan hệ (Relational Calculus):
+* Phép tính quan hệ (Relational Calculus):
 
 	- Được xem là ngôn ngữ phi thủ tục vì chỉ cần viết biểu thức khai báo (declarative expression) để đưa ra yêu cầu.
 		+ Tập trung vào mô tả điều kiện logic mà dữ liệu phải thỏa mãn.
 		+ Không cần mô tả cách thức hoặc thứ tự thực hiện các truy vấn.
+		+ Cũng có thể được viết theo nhiều cách khác nhau, nhưng thứ tự viết sẽ không ảnh hưởng đến hiệu xuất của truy vấn.
 
 	- Sử dụng các phép toán vị từ (predicate).
 		+ Là 1 hàm đối số nằm ở phía sau để diễn đạt điều người dùng muốn.
 		+ Chỉ trả về hai kết quả đúng hoặc sai.
 
 		* Có hai loại phép toán vị từ trên CSDL:
-			1. Phép toán trên dòng (Tuple Relational Calculus).
-			2. Phép toán trên cột (Domain Relational Calculus).
+			1. Phép tính trên dòng (Tuple Relational Calculus).
+			2. Phép tính trên cột (Domain Relational Calculus).
+
+	
 
 --------------------
 
-	1. Phép toán trên dòng (Tuple Relational Calculus):
+	1. Phép tính trên dòng (Tuple Relational Calculus):
 
 		- Tìm ra các dòng giúp vị từ có giá trị đúng.
 
@@ -3833,19 +3872,36 @@ Các phép toán ĐSQH cơ bản sẽ không đủ để thực hiện được 
 		Ví dụ:
 			Lập danh sách các nhân viên có lương trên 10tr.
 				- Đại số quan hệ: σ (salary > 10,000,000) (Staff)
-				- Phép toán quan hệ trên dòng: {S | Staff(S) ∧ S.salary > 10,000,000}
+				- Phép tính quan hệ trên dòng: {S | Staff(S) ∧ S.salary > 10,000,000}
 
 			Lập danh sách các nhân viên có lương trên 10tr, nhưng chỉ bao gồm 1 cột lương trong danh sách.
 				- Đại số quan hệ: π salary (σ (salary > 10,000,000) (Staff))
-				- Phép toán quan hệ trên dòng: {S.salary | Staff(S) ∧ S.salary > 10,000,000}
+				- Phép tính quan hệ trên dòng: {S.salary | Staff(S) ∧ S.salary > 10,000,000}
 
 			Lập danh sách các nhân viên có tên là Mark, nhưng chỉ bao gồm tên, ngày sinh và địa chỉ của nhân viên.
 				- Đại số quan hệ: π name, birthDate, homeAddress (σ (name = 'Mark') (Staff))
-				- Phép toán quan hệ trên dòng: {S.name, S.birthDate, S.homeAddress | Staff(S) ∧ S.name = 'Mark'}
+				- Phép tính quan hệ trên dòng: {S.name, S.birthDate, S.homeAddress | Staff(S) ∧ S.name = 'Mark'}
 
 		- Có thể sử dụng thêm các lượng từ (quatifier) để cho biết vị từ sẽ được áp dụng trên bao nhiêu dòng.
-			+ Tồn tại (∃): Đảm bảo trong công thức có ít nhất 1 giá trị dụng.
-			+ Với mọi (∀):
+			+ Tồn tại (∃): Đảm bảo trong công thức có ít nhất 1 giá trị đúng.
+			+ Với mọi (∀): Đảm bảo trong công thức, tất cả giá trị đều đúng.
+
+			Ví dụ:
+				Student (Id, Name, BirthDate)
+				Professor (Id, Name, Qualification)
+				Teaching (ProfId, CrsCode, Semester)
+				Course (CrsCode, Name)
+				Transcript (StudId, CrsCode, Semester, Year, Grade)
+
+				- Liệt kê tất cả môn học mà mọi sinh viên đều học.
+				{C | Course(C) ∧ (∀S) Student(S) ∧ (∃T) Transcript(T) ∧ Id = StudId ∧ C.CrsCode = T.CrsCode}
+
+				- Liệt kê tên tất cả giảng viên đã dạy môn MGT123
+				{P.Name | Professor(P) ∧ (∃T) (Teaching(T) ∧ (P.Id = T.ProfId ∧ T.CrsCode = 'MGT123'))}
+
+--------------------
+
+	2. Phép tính trên cột (Domain Relational Calculus): .
 
 --------------------------------------------------------------------------------
 
@@ -4246,147 +4302,352 @@ Nhưng với sự phong phú của dữ liệu, NoSQL ra đời.
 ==========================================================================================
 ==========================================================================================
 
-[NHỮNG LƯU Ý]
+[THAO TÁC TRUY VẤN DỮ LIỆU VỚI NGÔN NGỮ SQL TRÊN SQL SERVER]
 
-Mặc định, các câu lệnh sẽ chạy theo thứ tự từ trên xuống dưới. Vì vậy, để chỉ định một câu lệnh hoặc một nhóm câu lệnh cần thực thi, ta có thể quét chọn (bôi đen) câu lệnh hoặc một nhóm câu lệnh đó.
+Câu lệnh của SQL là sự kết hợp giữa các từ khoá và các từ do người dùng tự định nghĩa.
 
-Phím tắt để thực thi câu lệnh trong SQL Server là [F5].
+	- Bao gồm các từ:
+		1. Từ khoá (Reserved): Là các từ khoá do SQL quy định sẵn (ví dụ: SELECT, FROM, WHERE,...).
+		2. Từ do người dùng định nghĩa (User-defined): Là tên do người dùng tự đặt và không bị trùng với từ khoá (ví dụ: tên bảng, tên cột, tên view...).
 
-Đối với collation mặc định, SQL Server sẽ không phân biệt hoa thường. Nhưng những từ khoá, hàm() sẽ được quy ước nên được viết in hoa toàn bộ.
+	- Vì mục đích của cơ sở dữ liệu là để lưu trữ và cho phép tìm được càng nhiều dữ liệu càng tốt, nên đối với collation mặc định, SQL Server sẽ không phân biệt hoa/ thường.
+		+ Việc phân biệt hoa thường sẽ gây cản trở trong việc tìm kiếm.
+		+ Tuy nhiên, khuyến khích viết theo dạng chuẩn Backus–Naur (Backus–Naur form/ Backus normal form - BNF):
+			1. Các từ khoá của ngôn ngữ nên được viết in hoa.
+			2. Các từ do người dùng tự định nghĩa sẽ được viết theo cú pháp UpperCamelCase/ PascalCase.
+			3. Các dữ liệu là chuỗi hoặc ngày-tháng-năm phải được đặt trong dấu nháy đơn (ví dụ: 'TP.HCM', '01/01/1900',...).
+			4. Các cụm câu lệnh có liên quan đến nhau (ví dụ: JOIN-ON, GROUP BY-HAVING,...), vế sau nên được viết tab vào bên trong.
 
-	- Vì mục đích của cơ sở dữ liệu là để lưu trữ và cho phép tìm được càng nhiều dữ liệu càng tốt, việc phân biệt hoa thường sẽ gây cản trở trong việc tìm kiếm.
+Trong SQL Server:
 
-	- Vì hàm có trả về giá trị nên ta hoàn toàn có thể đem đi sử dụng và lồng bên trong những câu lệnh khác.
+	- Phím tắt để thực thi câu lệnh trong SQL Server là [F5].
+
+	- Mặc định, các câu lệnh sẽ chạy theo thứ tự từ trên xuống dưới. Vì vậy, để chỉ định một câu lệnh hoặc một nhóm câu lệnh cần thực thi, ta có thể quét chọn (bôi đen) câu lệnh hoặc một nhóm câu lệnh đó.
+
+	- Với phiên bản SQL Server 2014, ta có thể định dạng lại các câu lệnh bằng tổ hợp phím: [Crtl] + [K], [Ctrl] + [Y].
+
+* Lưu ý:
+
+	- Câu mệnh (Statement) thường ám chỉ một câu lệnh SQL hoàn chỉnh, thực hiện một nhu cầu cụ thể và được thực thi bởi HQTCSDL.
+		-> Câu lệnh hoàn chỉnh.
+
+	- Mệnh đề (Clause) là từng từ khoá riêng lẻ (ví dụ: WHERE, FROM, SELECT, ORDER BY, GROUP BY,...) kết hợp với nhau theo nhiều cách để tạo thành một câu lệnh.
+		-> Một phần của câu lệnh.
+
+		Ví dụ: Câu lệnh hoàn chỉnh với ba mệnh đề cơ bản: SELECT, FROM, WHERE.
+
+			SELECT Bdate, Address
+			FROM EMPLOYEE
+			WHERE Fname = 'John' AND Minit = 'B' AND Lname = 'Smith'
 
 ==========================================================================================
 
 [CÂU LỆNH ĐỂ LẤY DỮ LIỆU RA: SELECT - SELECT STATEMENT]
 
-Có rất nhiều câu lệnh (statement) để tương tác với cơ sở dữ liệu và lấy dữ liệu ra.
+Quy trình xây dựng câu truy vấn:
+	1. Xác định các thông tin cần thiết.
+	2. Xác định các bảng chứa các thông tin cần lấy.
+	3. Xác định các điều kiện.
+	4. Xác định các thông tin trả về.
 
-Một trong những câu lệnh đầu tiên là SELECT với công dụng.
+--------------------------------------------------------------------------------
 
-	1. Lấy dữ liệu lên, tính toán và in ra màn hình (giống như những câu lệnh in ra màn hình của các ngôn ngữ lập trình: printf(), cin, System.out.println(), echo...).
+Có rất nhiều câu lệnh để tương tác với CSDL.
 
-	2. In ra dữ liệu đang có trong bảng (dưới dạng hàng và cột).
+Một trong những câu lệnh đầu tiên là SELECT.
 
-	-> Luôn hiển thị dữ liệu ra dưới dạng bảng (gồm hàng và cột).
+	- Có các công dụng:
 
-	* Phép chiếu (Projection): Trả về nguyên một cột với nhiều dòng hoặc nhiều cột (sử dụng đèn pin để rọi).
+		1. Lấy dữ liệu lên, tính toán và in ra màn hình (giống như những câu lệnh in ra màn hình của các ngôn ngữ lập trình: printf(), cin, System.out.println(), echo...).
 
-* Cú pháp chuẩn: In toàn bộ dữ liệu trong một bảng.
+		2. In ra dữ liệu đang có trong bảng (dưới dạng hàng và cột).
+
+		-> Luôn hiển thị dữ liệu ra dưới dạng bảng (gồm hàng và cột).
+
+	- Tương đương với phép chiếu (Projection) trong ĐSQH khi cho phép liệt kê các cột (sử dụng đèn pin để rọi).
+
+------------------------------------------------------------
+
+* Cú pháp chuẩn: Một bảng và tất cả cột.
+
 	SELECT *
-	FROM [Tên bảng]
+	FROM <Tên bảng>
 
-	-- Dấu * sẽ cho biết việc muốn lấy tất cả các cột trong bảng
-	-- Mệnh đề FROM sẽ cho biết tên của bảng cần lấy dữ liệu
+		- Gồm hai thành phần bắt buộc phải có trong các truy vấn SQL: SELECT và FROM.
+			+ Mệnh đề FROM cho phép liệt kê bảng chứa dữ liệu cần lấy.
+			+ Mệnh đề SELECT chọn ra các cột từ bảng được liệt kê trong FROM.
 
-		Ví dụ: Lấy tất cả các cột trong bảng nhân viên.
+		- Khi viết truy vấn, có thể nhập tên bảng trong FROM trước để nhận được gợi ý khi liệt kê tên cột trong SELECT.
 
+		-> In toàn bộ dữ liệu trong một bảng.
+
+		Ví dụ: Lấy tất cả các cột trong bảng nhân viên
+
+			-- Sử dụng dấu hoa thị/ dấu sao '*'
+			-- để đại diện cho tất cả các cột trong bảng
 			SELECT *
 			FROM Employees
 
-* Cú pháp mở rộng: In một vài cột trong bảng.
+----------------------------------------
 
-	-- Liệt kê một số cột nhất định cần lấy từ một bảng,
-	-- những cột không sử dụng đến sẽ được ẩn đi
-	SELECT [Tên các cột, cách nhau bởi dấu phẩy]
-	FROM [Tên bảng]
+* Cú pháp mở rộng: Liệt kê cột trong SELECT.
+
+	SELECT <Danh sách cột>
+	FROM <Tên bảng>
+
+		- Liệt kê danh sách các cột cần lấy từ một bảng, những cột không sử dụng đến sẽ được ẩn đi.
+
+		- Mỗi cột được liệt kê cách nhau bằng dấu phẩy ','.
+
+		-> In một vài cột trong bảng.
 	
-	-- Mẹo: Nhập tên bảng trước để nhận được gợi ý khi nhập tên cột
-
-		Ví dụ: Lấy một số cột trong bảng nhân viên.
+		Ví dụ: Chỉ lấy một số cột trong bảng nhân viên.
 
 			SELECT EmployeeID, LastName, FirstName, Title, BirthDate
 			FROM Employees
 
-* Cú pháp mở rộng: Sử dụng thêm hàm và phép toán để xử lý các cột.
+----------------------------------------
+
+* Cú pháp mở rộng: Tính toán trên cột trong SELECT.
+
+	SELECT <Biểu thức tính toán trên cột>
+	FROM <Tên bảng>
+
+		- Ngoài việc cho phép liệt kê tên các cột có trong bảng, mệnh đề SELECT còn cho phép sử dụng thêm hàm và phép toán để xử lý các cột.
+
+		- Kết quả trả về một cột mới (không có tên).
 
 		Ví dụ: Xử lý các cột trong bảng nhân viên.
 
 			-- Sử dụng phép toán cộng
-			-- để ghép cột họ và tên thành cột tên đầy đủ,
-			-- sau đó đặt tên giả cho cột mới này
-			SELECT EmployeeID, LastName + ' ' + FirstName AS [Full name]
+			-- để ghép cột họ và tên thành cột tên đầy đủ
+			SELECT EmployeeID,
+			       LastName + ' ' + FirstName,
+			       2 * Salary
 			FROM Employees
-		
+	
 			-- Sử dụng hàm
-			-- để tính toán tuổi dựa theo cột ngày sinh,
-			-- sau đó đặt tên giả cho cột mới này
-			SELECT YEAR(GETDATE()) - YEAR(BirthDate) AS Age
+			-- để tính toán tuổi dựa theo cột ngày sinh
+			SELECT YEAR(GETDATE()) - YEAR(BirthDate)
 			FROM Employees
 
-* Cú pháp mở rộng: Loại bỏ những dữ liệu bị trùng.
+----------------------------------------
 
-	-- Dữ liệu từ cột trong bảng có nguy cơ bị trùng lặp (trùng 100%),
-	-- nhưng đây hoàn toàn không phải là sai sót trong việc nhập liệu hay thiết kế,
-	-- mà chỉ đơn giản là vì có quá nhiều thông tin / đặc điểm trùng nhau
-	-- và ta lại đang tập trung vào dữ liệu đó
-	SELECT DISTINCT [Tên các cột, cách nhau bởi dấu phẩy]
-	FROM [Tên bảng]
+* Cú pháp mở rộng: Liệt kê bảng trong FROM.
 
-	-- Càng nhiều cột được chọn thì càng khó trùng
+	SELECT <Danh sách cột/ biểu thức>
+	FROM <Danh sách bảng>
 
-	-- * Lưu ý 1: Nếu từ khoá DISTINCT đi kèm với khoá chính
-	--	      thì sẽ trở nên vô nghĩa, vì khoá chính đã cấm trùng nhau
-	--	      (hoặc bộ lọc WHERE đi kèm với DISTINCT cũng sẽ vô nghĩa)
+		- Nếu dữ liệu cần lấy nằm ở các bảng khác nhau, ta có thể chỉ định các bảng chứ dữ liệu trong FROM.
 
-	-- * Lưu ý 2: Không thể sử dụng DISTINCT trên những cột
-	--	      có kiểu dữ liệu nhị phân (Binary text) - Hexa,
-	--	      vì việc so sánh giữa hai tập tin nhị phân là vô nghĩa
+		- Nếu có từ hai bảng trở lên và không có mệnh đề WHERE thì kết quả sẽ là tích Đềcác của các bảng.
 
-		Ví dụ 1: Toàn bộ người dân Việt Nam đều sẽ thuộc 63 Tỉnh và Thành phố.
-			- Mặc dù có hơn 100tr dòng dữ liệu, nhưng cuối cùng chỉ có 63 giá trị là khác nhau.
+		Ví dụ: Tích Đềcác của hai bảng nhân viên và phòng ban.
+
+			SELECT *
+			FROM Employees, Department
+
+----------------------------------------
+
+* Cú pháp mở rộng: Đặt bí danh (Alias) bằng AS.
+		
+	SELECT <Danh sách cột/ biểu thức> AS 'Tên mới của cột'
+	FROM <Danh sách bảng> AS [Tên tắt của bảng]
+
+		- Trong SQL, mỗi cột trong một bảng không được phép trùng tên.
+			+ Cả hai cột chỉ được phép trùng tên nếu khác bảng.
+			+ Nếu có nhu cầu cùng sử dụng cả hai cột trùng tên này, cần phải có cách để tránh bị mơ hồ (ambiguous).
+
+		- Để phân biệt giữa các cột trong trường hợp trùng tên:
+			1. Sử dụng tên bảng và dấu chấm '.' để chỉ định cột trong bảng.
+			2. Sử dụng tên giả/ tên tắt/ biệt hiệu/ bí danh (alias).
+
+		- Không chỉ được sử dụng để đặt tên tạm cho cột, từ khoá AS còn được sử dụng để đặt tên tạm cho biểu thức tính toán và tên bảng.
+			+ Có thể tường minh sử dụng từ khoá AS hoặc không (ngầm định)
+			+ Nếu tên mới của cột có khoảng trắng hoặc dấu tiếng Việt, cần bổ sung thêm dấu nháy đơn hoặc dấu ngoặc vuông.
+
+		- Tên tạm chỉ có phạm vi sử dụng trong một câu truy vấn.
+
+		Ví dụ 1: Sử dụng tên bảng để phân biệt cột.
+
+			-- Cả bảng Employees và Department
+			-- đều có cột Name, vì vậy,
+			-- cần chỉ định rõ cột nào muốn sử dụng
+			-- bằng cách thêm tiền tố tên bảng trước tên cột
+			SELECT Fname, Employees.Name, Address
+			FROM Employees, Department
+
+		Ví dụ 2: Đặt tên cột và tên tạm cho bảng nhân viên.
+
+			-- Sử dụng tên tạm của bảng để gọi tên cột
+			-- và sau đó đặt tên tạm cho các cột trong bảng
+			SELECT E.EmployeeID AS 'Mã nhân viên',
+			       E.LastName + ' ' + E.FirstName AS [Họ và tên nhân viên],
+			       2 * E.Salary Luong,
+			       YEAR(GETDATE()) - YEAR(E.BirthDate) Tuoi,
+			       D.*
+
+			-- Đặt tên tạm cho bảng
+			-- để có thể sử dụng trong các mệnh đề khác
+			-- mà không tốn công viết đầy đủ tên gốc của bảng nhiều lần
+			FROM Employees E, Department D
+
+--------------------
+
+* Lưu ý 1: Vì SQL không phân biệt kí tự hoa/ thường, nên dù có đặt tên in hoa toàn bộ thì vẫn có thể sử dụng tên in thường.
+
+* Lưu ý 2: Mệnh đề WHERE sẽ được thực thi trước mệnh đề SELECT, nên không thể sử dụng bí danh của cột SELECT trong WHERE.
+
+	Ví dụ: Đặt bí danh cho bảng và thuộc tính của bảng NHANVIEN.
+
+		-- Sử dụng bí danh không phân biệt hoa/ thường
+		SELECT nv.LastName AS lt, nv.FirstName AS fn
+		FROM Employees AS NV
+
+		-- Không thể lấy bí danh đã đặt trong SELECT
+		-- sử dụng cho các điều kiện trong WHERE
+		WHERE fn = 'Nguyen' -- Báo lỗi: "Invalid column name"
+
+----------------------------------------
+
+* Cú pháp mở rộng: Thay đổi giá trị của kết quả bằng CASE.
+
+	SELECT <Danh sách cột>
+		CASE
+			WHERE <Điều kiện đầu tiên> THEN N'Giá trị hiển thị ra'
+			ELSE N'Giá trị hiển thị, tương đương với điều kiện thứ hai'
+		END AS 'Tên cột mới'
+	FROM  <Danh sách bảng>
+
+		- Bên cạnh việc thay đổi tên cột được hiển thị ra, ta còn có thể thay đổi giá trị trả về được hiển thị ra ở bên trong các cột.
+
+		- Dựa trên việc so sánh để quyết định xem thông tin nào sẽ được hiển thị ra.
+			+ Nếu là so sánh bằng, tên cột được phép nằm phía sau từ khoá CASE.
+			+ Nếu là so sánh với các phép toán: >, <,..., tên cột được viết ở phía sau mện đề WHERE (được lồng trong CASE).
+
+		Ví dụ: Thay đổi giá trị hiển thị ra trong cột của bảng nhân viên và đặt tên cho cột có giá trị bị thay đổi.
+
+			SELECT Name,
+				CASE
+					WHERE Salary >= 30,000,000 THEN N'Lương cao'
+					ELSE N'Lương thấp'
+				END AS 'Tình trạng lương',
+
+				CASE Gender
+					WHERE 'Male' THEN 'Nam'
+					ELSE N'Nữ'
+				END AS 'Giới tính'
+
+			FROM Employees
+
+----------------------------------------
+
+* Cú pháp mở rộng: Loại bỏ những dữ liệu bị trùng bằng từ khoá DISTINCT.
+
+	SELECT DISTINCT <Danh sách cột/ biểu thức>
+	FROM <Danh sách bảng>
+
+		- Dữ liệu từ cột trong bảng có nguy cơ bị trùng lặp (trùng 100%).
+			+ Đây hoàn toàn không phải là sai sót trong việc nhập liệu hay thiết kế, mà chỉ đơn giản là vì có quá nhiều thông tin / đặc điểm trùng nhau và ta lại đang tập trung vào dữ liệu đó.
+			+ Khi sử dụng mệnh đề SELECT, càng ít cột được chọn thì càng ít thông tin để phân biệt, càng tăng nguy cơ bị trùng dữ liệu.
+
+		- Kết quả trả về là một tập hợp đa phần tử (multiset / bag) với các dòng có thể trùng nhau trong cùng một bảng.
+			+ Đây là xử lý mặc định của từ khoá ALL trong câu lệnh SELECT.
+			+ Các dòng trùng nhau sẽ không được tự động loại trừ vì phải sắp xếp theo thứ tự rồi mới loại bỏ được, và đôi khi việc bị trùng vẫn có giá trị sử dụng.
+			+ Vì vậy, để chủ động loại bỏ những kết quả truy vấn bị trùng, cần sử dụng thêm từ khoá DISTINCT phía sau câu lệnh SELECT.
+
+		Ví dụ 1: Hơn 100tr người dân Việt Nam sẽ được phân biệt với nhau theo nhiều cách, tối ưu nhất là phân biệt theo mã số CCCD.
+			- Trong rất nhiều thông tin, nếu chỉ tập trung vào một thông tin duy nhất là tỉnh-thành phố thì việc trùng lặp chắc chắn sẽ diễn ra.
+			- Toàn bộ người dân Việt Nam đều sẽ thuộc 63 Tỉnh và Thành phố.
+			- Vì vậy, mặc dù có hơn 100tr dòng dữ liệu, nhưng cuối cùng chỉ có 63 giá trị là khác nhau.
 
 		Ví dụ 2: Loại bỏ dữ liệu bị trùng trong bảng nhân viên.
 		
 			-- Sử dụng từ khoá DISTINCT
 			-- để loại bỏ những giá trị trùng nhau trong cột tên quốc gia
-			SELECT DISTINCT Country FROM Customers
+			SELECT DISTINCT Country
+			FROM Customers
 
-* Cú pháp mở rộng: Sắp xếp dữ liệu theo một tiêu chí nào đó.
+--------------------
 
-	-- Sắp xếp dữ liệu theo cách thức / tiêu chí:
-	--	1. Tăng dần (Ascending - ASC)
-	--	2. Giảm dần (Descending - DESC)
-	-- (Mặc định sẽ sắp xếp tăng dần)
-	SELECT [Tên các cột, cách nhau bởi dấu phẩy]
-	FROM [Tên bảng]
-	ORDER BY [Tên cột muốn sắp xếp] [Kiểu sắp xếp: tăng hoặc giảm dần]
+* Lưu ý 1: Nếu từ khoá DISTINCT đi kèm với khoá chính thì sẽ trở nên vô nghĩa, vì khoá chính đã mặc định cấm trùng nhau.
 
-	-- Ta có thể sắp xếp trên nhiều cột khác nhau
+* Lưu ý 2: Không thể sử dụng DISTINCT trên những cột có kiểu dữ liệu nhị phân (Binary text) - Hexa, vì việc so sánh giữa hai tập tin nhị phân là vô nghĩa.
 
-		Ví dụ: Sắp xếp khách hàng theo thứ tự quốc gia giảm dần (theo bảng chữ cái).
-			SELECT * FROM Customers
-			WHERE Country = 'Italy' OR Country = 'USA'
-			ORDER BY Country DESC
+----------------------------------------
 
-* Cú pháp mở rộng: Lọc dữ liệu theo điều kiện.
+* Cú pháp mở rộng: Sắp xếp dữ liệu bằng ORDER BY.
 
-	-- Mệnh đề WHERE được sử dụng để làm bộ lọc (filter),
-	-- giúp lựa ra dữ liệu theo một tiêu chí nào đó
-	-- (Càng nhiều bộ lọc thì sẽ càng có ít dữ liệu được hiển thị ra.)
+	SELECT <Danh sách cột>
+	FROM <Danh sách bảng>
+	ORDER BY <Tên cột muốn sắp xếp> [Kiểu sắp xếp: tăng hoặc giảm dần]
 
-	-- Tìm theo từng dòng, với cột chứa giá trị cần lọc,
-	-- kiểm tra xem giá trị trong ô đó có thoả với điều kiện lọc hay không
-	-- (Kiểm tra theo cột và so sánh giá trị được chứa trong cột,
-	--  sau đó lấy dòng ra theo tiêu chí / giá trị của cột.)
-	SELECT [Tên các cột, cách nhau bởi dấu phẩy]
-	FROM [Tên bảng]
-	WHERE [Điều kiện lọc
+		- Sắp xếp dữ liệu theo cách thức / tiêu chí:
+			1. Tăng dần (Ascending - ASC).
+			2. Giảm dần (Descending - DESC).
+			(Mặc định sẽ sắp xếp tăng dần)
+
+		- Ngoài ra, ta cũng có thể sắp xếp trên nhiều cột khác nhau.
+			+ Ban đầu sẽ sắp xếp theo thứ tự của cột đầu tiên, nếu cột đầu tiên không chứa các giá trị trùng nhau thì các cột khác được liệt kê sẽ không bao giờ được sử dụng đến.
+			+ Nếu có trùng nhau trong cột đầu tiên, các cột tiếp theo mới được sử dụng để sắp xếp, khi cột đầu tiên hết trùng sẽ trở lại thứ tự của cột đầu tiên.
+
+		- Ngoài việc chỉ định trực tiếp tên cột, ta còn có thế sử dụng số thứ tự được liệt kê trong mệnh đề SELECT để ám chỉ cho tên cột.
+
+		Ví dụ: Sắp xếp tên người tăng dần giảm dần (theo bảng chữ cái) và năm sinh giảm dần.
+
+			-----------------------------------------
+			| FirstName | LastName    | YearOfBirth |
+			|-----------+-------------+-------------|
+			| Thomas    | Alva Edison |	1847	|
+			| Benjamin  | Franklin    |	1706	|
+			| Thomas    | More        |	1478	|
+			| Thomas    | Jefferson   |	1826	|
+			-----------------------------------------
+
+			SELECT *
+			FROM People
+			ORDER BY FirstName ASC, YearOfBirth DESC
+
+			-----------------------------------------
+			| FirstName | LastName    | YearOfBirth |
+			|-----------+-------------+-------------|
+			| Benjamin  | Franklin    |	1706	|
+			| Thomas    | Alva Edison |	1847	|
+			| Thomas    | Jefferson   |	1826	|
+			| Thomas    | More        |	1478	|
+			-----------------------------------------
+
+----------------------------------------
+
+* Cú pháp mở rộng: Liệt kê điều kiện chọn trong WHERE.
+
+	SELECT <Danh sách cột>
+	FROM <Danh sách bảng>
+	WHERE <Danh sách điều kiện lọc các dòng>
 		1. Tên cột
 		2. Giá trị của cột
 		3. Toán tử so sánh
-		4. Toán tử luận lý]
+		4. Toán tử luận lý
 
-	-- * Lưu ý 1: Vì bộ lọc liên quan đến giá trị được chứa bên trong một ô,
-	--	      nên ta phải quan tâm đến kiểu dữ liệu
-	--		- Số (Numeric): số nguyên và thực, chỉ cần ghi con số (ví dụ: 1, 2, 3.14, 9.8...)
-	--		- Kí tự / Chuỗi (String): 'A', 'Ahihi'...
-	--		- Ngày / Giờ (Date/Time): '2002-01-10'
+		- Là dạng cơ bản của câu lệnh SELECT, đôi khi còn được gọi là khối SELECT-FROM-WHERE (SELECT-FROM-WHERE block).
 
-	-- * Lưu ý 2: Nếu có sử dụng thêm mệnh đề ORDER BY thì phải để sau WHERE
-	--	      và mặc định sẽ được sắp xếp tăng dần (ASC)
+		- Mệnh đề WHERE được sử dụng để làm bộ lọc (filter).
+
+			+ Dữ liệu cần lọc có thể là cột trong bảng hoặc điều kiện để kết nối (JOIN) giữa các bảng.
+
+			+ Sử dụng các toán tử so sánh {=, <, <=, >, >= và <>} để tra một biểu thức và sử dụng các toán tử luận lý {AND, OR, NOT} để kết nối các biểu thức.
+
+			+ Giúp lựa ra dữ liệu theo một tiêu chí nào đó (càng nhiều bộ lọc thì sẽ càng có ít dữ liệu được hiển thị ra).
+
+			-> Lọc dữ liệu theo điều kiện.
+			
+		- Chỉ biết tên của cột chứa giá trị, không biết giá trị cần tìm nằm ở ô nào trong cột đó.
+		
+			+ Hoạt động như một vòng lặp khi phải liên tục kiểm tra từng ô trong cột chứa giá trị cần lọc, xem giá trị trong ô đó có thoả với điều kiện lọc hay không (so sánh giá trị trong ô).
+			
+			+ Kết quả trả về là một biểu thức điều kiện dạng luận lý (Boolean) - trả về các dòng thoả điều kiện.
+			
+			+ Sau đó tiếp tục chiếu (project) các dòng theo các cột được liệt kê trong mệnh đề SELECT (nếu có).
 
 		Ví dụ 1:
 			- Lọc ra toàn bộ những sinh viên có quê quán ở TP.HCM.
@@ -4394,110 +4655,146 @@ Một trong những câu lệnh đầu tiên là SELECT với công dụng.
 
 		Ví dụ 2:
 			-- Mệnh đề WHERE kết hợp với toán tử luận lý
-			SELECT * FROM Customers
+			SELECT *
+			FROM Customers
 			WHERE Country = 'Italy' OR Country = 'USA'
 			
 			-- Mệnh đề WHERE kết hợp với toán tử luận lý và toán tử so sánh
-			SELECT * FROM Students
+			SELECT *
+			FROM Students
 			WHERE City = N'Hồ Chí Minh' AND GPA >= 8
 			
 			-- Mệnh đề WHERE kết hợp với hàm để tính toán
-			SELECT * FROM Employees
+			SELECT *
+			FROM Employees
 			WHERE YEAR(BirthDate) >= 2010 OR YEAR(BirthDate) >= 2020
 
-* Cú pháp mở rộng: Lấy dữ liệu trong một đoạn / khoảng nhưng không sử dụng WHERE.
+--------------------
 
-	-- Để lọc dữ liệu trong một đoạn / khoảng / tập giá trị cho trước,
-	-- thay vì sử dụng mệnh đề WHERE kết hợp với các toán tử ">= ... AND <= ...",
-	-- ta có thể sử dụng toán tử BETWEEN và AND
-	-- (Giá trị nằm trong khoảng giữa hai giá trị.)
-	BETWEEN [Giá trị 1] AND [Giá trị 2]
+* Lưu ý 1: Vì bộ lọc liên quan đến giá trị được chứa bên trong một ô, nên ta phải quan tâm đến kiểu dữ liệu.
+	- Số (Numeric): số nguyên và thực, chỉ cần ghi con số (ví dụ: 1, 2, 3.14, 9.8,...).
+	- Kí tự / Chuỗi (String): 'A', 'Ahihi',...
+	- Ngày / Giờ (Date/Time): '2002-01-10',...
+	
+* Lưu ý 2: Nếu có sử dụng thêm mệnh đề ORDER BY thì phải để sau WHERE và mặc định sẽ được sắp xếp tăng dần (ASC).
 
-	-- Khi có một tập hợp các giá trị / mệnh đề đơn lẻ, rời rạc
-	-- và được kết nối với nhau bằng toán tử OR
-	-- (giống như việc sử dụng mệnh đề Switch-Case),
-	-- ta có thể thay thế bằng toán tử IN
-	-- (Giá trị rơi vào một trong những giá trị đã được liệt kê.)
-	IN (Danh sách các giá trị, cách nhau bởi dấu phẩy)
+----------------------------------------
 
-	-- * Lưu ý: Chỉ sử dụng được toán tử IN khi có thể liệt kê được tập giá trị
-	--	    và sau đó so sánh bằng chính xác một giá trị nào đó,
-	--	    còn những khoảng số thực sẽ không thể liệt kê được
-	--	    vì giữa hai số thực sẽ có vô vàn những số thực khác,
-	--	    mặc dù đối với BETWEEN và AND
-	--	    thì vẫn có thể sử dụng khoảng số thực bình thường
+* Cú pháp mở rộng: Lấy dữ liệu trong khoảng với BETWEEN-AND và trong tập hợp với IN.
+
+	WHERE <Tên cột> BETWEEN (Giá trị 1) AND (Giá trị 2)
+
+		- Để lọc dữ liệu trong một đoạn / khoảng / tập giá trị cho trước, thay vì sử dụng mệnh đề WHERE kết hợp với các toán tử ">= ... AND <= ...", ta có thể sử dụng toán tử BETWEEN và AND (giá trị nằm trong khoảng giữa hai giá trị).
+
+		- Có thể lọc ra một khoảng giá trị số thưc, tuy nhiên, có thể xảy ra sai số do độ chính xác của số thực không phải lúc nào cũng hoàn hảo.
+			+ Có thể sử dụng hàm ROUND() để giới hạn số chữ số thập phân.
+			+ Có thể so sánh chênh lệch giữa hai giá trị với một giá trị epsilon nhỏ (ví dụ: 0.001) - mức độ chênh lệch chấp nhận được.
+
+		Ví dụ: Chỉ lấy những nhân viên có mức lương trong khoảng 10tr đến 20tr.
+
+			SELECT *
+			FROM Employees
+
+			-- Sử dụng điều kiện so sánh truyền thống
+			WHERE Salary >= 10,000,000 AND Salary <= 20,000,000
+
+			-- Sử dụng toán tử BETWEEN và AND
+			WHERE Salary BETWEEN 10,000,000 AND 20,000,000
+
+	WHERE <Tên cột> IN (Danh sách các giá trị)
+
+		- Khi có một tập hợp các giá trị / mệnh đề đơn lẻ, rời rạc và được kết nối với nhau bằng toán tử OR, ta có thể thay thế bằng toán tử IN (giá trị rơi vào một trong những giá trị đã được liệt kê).
+
+		* Lưu ý: Chỉ sử dụng được toán tử IN khi có thể liệt kê được tập giá trị.
+			- So sánh bằng chính xác một giá trị nào đó, còn những khoảng số thực sẽ không thể liệt kê được vì giữa hai số thực sẽ có vô vàn những số thực khác.
+			- Mặc dù đối với BETWEEN và AND thì vẫn có thể sử dụng khoảng số thực bình thường.
 
 		Ví dụ: Chỉ lấy những đơn hàng được giao đến 1 trong 3 quốc gia được liệt kê.
-			SELECT * FROM Orders
+
+			SELECT *
+			FROM Orders
 			WHERE ShipCountry IN ('UK', 'France', 'USA')
 			ORDER BY ShipCountry
 
+----------------------------------------
+
 * Cú pháp mở rộng: Kiểu dữ liệu và trạng thái NULL.
 
-	-- Trong thực tế, sẽ có những lúc mà ta không thể
-	-- xác định được giá trị / thông tin của dữ liệu
-	-- Vì dữ liệu đa chưa xác định nên ta không thể sử dụng toán tử so sánh,
-	-- mà chỉ có thể sử dụng toán tử:
-	IS NULL
-	IS NOT NULL
-	NOT (Tên bảng IS NULL)
+	WHERE <Tên bảng> IS NULL
+	WHERE <Tên bảng> IS NOT NULL
+	WHERE NOT <Tên bảng IS NULL>
 
-	-- * Lưu ý: NULL ở đây là một trạng thái (với ô được tô màu vàng),
-	--	    chứ không phải là một chuỗi 'NULL'
+		- Trong thực tế, sẽ có những lúc mà ta không thể xác định được giá trị / thông tin của dữ liệu.
+			+ Có thể là do không biết, bị giấu hoặc trở nên vô nghĩa trong ngữ cảnh sử dụng, nên ta không thể sử dụng toán tử so sánh thông thường được.
+			+ Vì vậy, ta có một số phép toán so sánh bằng "đặc biệt".
+
+		* Lưu ý: NULL ở đây là một trạng thái (với ô được tô màu vàng), không phải là một chuỗi 'NULL'.
 
 		Ví dụ: Lọc ra những nhân viên có quốc gia khác NULL.
-			SELECT * FROM Employees
+			SELECT *
+			FROM Employees
 			WHERE Region IS NOT NULL
 			
-			SELECT * FROM Employees
+			SELECT *
+			FROM Employees
 			WHERE NOT (Region IS NULL)
 
-* Cú pháp mở rộng: Toán tử, phép toán so sánh gần đúng / có sự xuất hiện.
+----------------------------------------
 
-	-- Đôi lúc, ta sẽ chỉ muốn lọc / tìm kiếm dữ liệu ở mức gần đúng (kiểu chuỗi)
-	-- Để sử dụng được toán tử LIKE, ta cần sử dụng thêm:
-	--	1. Dấu _: Đại diện cho một kí tự bất kì.
-	--	2. Dấu %: Đại diện cho một chuỗi bất kì.
-	LIKE
+* Cú pháp mở rộng: So sánh gần đúng bằng LIKE.
 
-	-- * Lưu ý: Không được phép sử dụng toán tử so sánh bằng ('=')
-	--	    khi muốn so sánh gần đúng,
-	--	    vì so sánh bằng nghĩa là phải đi so trùng 100%
+	WHERE <Tên cột> LIKE N'_Chuỗi-cần-so-sánh%'
 
-		Ví dụ 1:
-			Liệt kê ai đó có tên [CHÍNH XÁC] là Anh
-				≠
-			Liệt kê ai đó có tên [GẦN ĐÚNG / CÓ SỰ XUẤT HIỆN] là An
+		- Đôi lúc, ta sẽ chỉ muốn lọc / tìm kiếm dữ liệu ở mức tương đối (kiểu chuỗi), nhưng lại không thể sử dụng toán tử so sánh bằng '=', vì dấu bằng là so sánh tuyệt đối (trùng 100%).
 
-		Ví dụ 2:
+		- Vì vây, để so sánh gần đúng, ta sử dụng được toán tử LIKE:
+			1. Dấu _: Đại diện cho chỉ một kí tự.
+			2. Dấu %: Đại diện cho 0..n kí tự.
+
+		Ví dụ:
 			-- Bất kì ai có tên bắt đầu bằng chữ 'A',
 			-- phần còn lại (một kí tự hoặc một chuỗi) không quan tâm
-			SELECT * FROM Employees
-			FirstName LIKE N'A%' ≈ An, Anh...
+			SELECT *
+			FROM Employees
+			WHERE FirstName LIKE N'A%'	-- ≈ An, Anh,...
 
 			-- Bất kì ai trong tên chỉ có hai chữ cái
 			-- và bắt đầu bằng chữ 'A'
-			SELECT * FROM Employees
-			FirstName LIKE N'A_' ≈ An, Ân, Ái...
+			SELECT *
+			FROM Employees
+			WHERE FirstName LIKE N'A_'	-- ≈ An, Ân, Ái,...
 
-* Cú pháp mở rộng: Cú pháp tạm đầy đủ của SELECT.
+			-- Miễn trong tên quốc gia có chứa kí tự 'U',
+			-- còn 'U' nằm ở đầu, giữa hoặc cuối thì tuỳ
+			SELECT Country
+			FROM Employees E
+			WHERE E.Country LIKE '%U%'	-- ≈ UK, USA, Australia,...
 
-	SELECT [Tên các cột, cách nhau bởi dấu phẩy]
-		DISTINCT
-		Hàm()
-		Nested Query / Sub-Query: Câu truy vấn lồng nhau
+----------------------------------------
 
-	FROM [Tên bảng]
-		Một bảng
-		Nhiều bảng
+* Cú pháp tạm đầy đủ của SELECT:
 
-	WHERE [Điều kiện lọc]
+	(* Quy ước:
+		- Dấu | chỉ sự cho phép lựa chọn (hoặc).
+		- Dấu ngoặc vuông [] chỉ thành phần không bắt buộc (tuỳ chọn).
+		- Dấu ba chấm '...' chỉ sự lặp lại (0 hay nhiều lần).)
 
-	GROUP BY
+	SELECT
+		<* | Tên các cột [AS TênMớiCủaCột] [,...]
+		     Biểu thức [AS ĐặtTênChoBiểuThức] [,...]>
+		DISTINCT | ALL
+		Hàm() AS ĐặtTênChoHàm
+		Nested Query / Sub-Query: Câu truy vấn lồng nhau.
 
-	HAVING
+	FROM <Tên bảng [AS TênGọiTắt] [,...]>
 
-	ORDER BY [Tên cột muốn sắp xếp] [Kiểu sắp xếp: tăng hoặc giảm dần]
+	[WHERE <Điều kiện lọc các dòng>]
+
+	[GROUP BY <Danh sách cột cần gom nhóm>]
+
+		[HAVING <Điều kiện lọc cho các nhóm đã tạo>]
+
+	[ORDER BY <Danh sách cột muốn sắp xếp> [Kiểu sắp xếp: tăng hoặc giảm dần.]]
 
 ------------------------------------------------------------
 
@@ -4553,14 +4850,17 @@ Dù sử dụng cho mục đích nào thì kết quả hiển thị ra luôn dư
 
 ==========================================================================================
 
-[CÁC CÂU TRUY VẤN LỒNG NHAU - NESTED QUERY / SUB-QUERY]
+[CÁC CÂU TRUY VẤN LỒNG/ TRUY VẤN CON - NESTED QUERY/ SUB-QUERY]
 
 	* Tập hợp (Set): Không được phép trùng.
 	* Danh sách (List): Được phép trùng.
 
 Có rất nhiều cách khác nhau, và đây là một trong những cách đơn giản nhất.
 
-Trong một câu SQL có chứa / lồng bên trong một câu SQL khác, mà cụ thể ở đây là ở bên trong mệnh đề WHERE. Kỹ thuật này được gọi là "Đặt câu hỏi gián tiếp" hoặc "So sánh tương quan".
+Trong một câu SQL có chứa/ lồng bên trong một câu SQL khác.
+	- Câu truy vấn phụ cũng có thể được lồng trong mệnh đề SELECT, FROM và WHERE.
+	- Kỹ thuật này được gọi là "Đặt câu hỏi gián tiếp" hoặc "So sánh tương quan".
+
 	-> Kỹ thuật viết truy vấn theo kiểu hỏi gián tiếp.
 
 Trong mệnh đề WHERE của câu lệnh SELECT, "bộ lọc" có thể là:
@@ -4580,197 +4880,311 @@ Trong mệnh đề WHERE của câu lệnh SELECT, "bộ lọc" có thể là:
 
 --------------------------------------------------------------------------------
 
-- Câu truy vấn phụ / truy vấn lồng ở bên trong phải được thực thi thành công và trả về giá trị, thì câu truy vấn bên ngoài mới có thể thực thi tiếp được.
+- Câu truy vấn phụ/ truy vấn con/ truy vấn lồng ở bên trong phải được thực thi thành công và trả về giá trị, thì câu truy vấn bên ngoài mới có thể thực thi tiếp được.
 
-- Câu truy vấn bên ngoài có thể đón giá trị trả về từ câu truy vấn phụ / truy vấn lồng bằng các toán tử so sánh (=, >, <, IN...), miễn là có cùng kiểu dữ liệu trả về-nhận vào.
+- Câu truy vấn bên ngoài có thể đón giá trị trả về từ câu truy vấn phụ bằng các toán tử so sánh (=, >, <, IN,...), miễn là có cùng kiểu dữ liệu trả về-nhận vào.
 
 * Tuỳ vào cách viết mà một câu lệnh SELECT có thể:
 
 ------------------------------------------------------------
 
-1. Trả về duy nhất một giá trị.
+	1. Nhận vào một giá trị:
 
-	- Một giá trị duy nhất, nằm trong một ô duy nhất, thuộc một cột duy nhất (không phải một dòng với nhiều ô / cột).
+		- Một giá trị duy nhất, nằm trong một ô duy nhất, thuộc một cột duy nhất (không phải cả một dòng với nhiều cột).
 
-		Ví dụ: Sử dụng bộ lọc lên cột làm khoá chính và chỉ in ra duy nhất một giá trị trong một ô / cột.
-			SELECT FirstName FROM Employees WHERE EmployeeID = 1
+			Ví dụ: Sử dụng bộ lọc lên cột làm khoá chính và chỉ in ra duy nhất một giá trị trong cột.
+				SELECT FirstName
+				FROM Employees
+				WHERE EmployeeID = 1
 
-	- Vì kết quả cuối cùng là trả về duy nhất một giá trị (được chứa trong một ô), nên câu truy vấn này lại có thể tiếp tục tham gia / được lồng vào trong một câu truy vấn khác.
+		- Vì kết quả cuối cùng là trả về duy nhất một giá trị (được chứa trong một ô), nên câu truy vấn này lại có thể tiếp tục tham gia / được lồng vào trong một câu truy vấn khác.
 
-		Ví dụ: Liệt kê những ai cùng quê với King Robert
-		
-			---- * Câu hỏi trực tiếp: Quê quán của King Robert
+		- Có thể thoải mái sử dụng các phép toán so sánh: =, <>, >, <,...
+
+			Ví dụ: Liệt kê những ai cùng quê với King Robert.
 			
-			-- Lấy được ra chính xác King Robert
-			SELECT * FROM Employees WHERE FirstName = 'Robert'
-			
-			-- Trả về duy nhất một ô chứa giá trị
-			-- là thành phố - nơi King Robert đang sống
-			SELECT City FROM Employees WHERE FirstName = 'Robert'
-			
-			---- * Câu hỏi gián tiếp: Những nhân viên cùng quê với King Robert
-			SELECT * FROM Employees
+				---- * Câu hỏi trực tiếp: Quê quán của King Robert
+				
+				-- Lấy được ra chính xác King Robert
+				SELECT *
+				FROM Employees
+				WHERE FirstName = 'Robert'
+				
+				-- Trả về duy nhất một ô chứa giá trị
+				-- là thành phố - nơi King Robert đang sống
+				SELECT City
+				FROM Employees
+				WHERE FirstName = 'Robert'
+				
+				---- * Câu hỏi gián tiếp: Những nhân viên cùng quê với King Robert
+				SELECT *
+				FROM Employees
 
-			-- Lấy câu truy vấn trả về giá trị là một ô chứa thành phố
-			-- gán vào nơi nhận giá trị đầu vào là một thành phố
-					-- ≈ WHERE City = 'London'
-			WHERE City = (
-					SELECT City FROM Employees
-					WHERE FirstName = 'Robert'
-				     )
+				-- Lấy câu truy vấn trả về giá trị là một ô chứa thành phố
+				-- gán vào nơi nhận giá trị đầu vào là một thành phố
+				-- ≈ WHERE City = 'London'
+				WHERE City = (
+						SELECT City FROM Employees
+						WHERE FirstName = 'Robert'
+					     )
 
-			 -- Loại King Robert ra khỏi kết quả tìm kiếm,
-			 -- vì đang chỉ cần tìm người có cùng quê quán với King Robert			 
-			 AND FirstName != 'Robert'
+				-- Loại King Robert ra khỏi kết quả tìm kiếm,
+				-- vì đang chỉ cần tìm người có cùng quê quán với King Robert			 
+				AND FirstName != 'Robert'
 
 ------------------------------------------------------------
 
-2. Trả về một tập hợp các giá trị.
+	2. Nhận vào một tập hợp các giá trị:
 
-	- Tập hợp các kết quả đồng nhất (các giá trị khác nhau của cùng một biến / thuộc tính).
+		- Tập hợp các kết quả đồng nhất (các giá trị khác nhau của cùng một cột).
 
-		Ví dụ: In ra một tập hợp các giá trị cùng kiểu của cùng một cột.
-			SELECT FirstName FROM Employees
+			Ví dụ: In ra một tập hợp các giá trị cùng kiểu của cùng một cột.
+				SELECT FirstName
+				FROM Employees
 
-	- Được gọi là tập hợp vì các giá trị (dòng) bên trong đều có cùng một kiểu và thuộc cùng một cột.
+		- Được gọi là tập hợp vì các giá trị (dòng) bên trong đều có cùng một kiểu và thuộc cùng một cột.
 
-		Ví dụ: Liệt kê những đơn hàng do những nhân viên có quê ở Luân Đôn phụ trách.
-		
-			---- * Câu hỏi trực tiếp: Danh sách các nhân viên có quê ở Luân Đôn
+		- Có ba kiểu để so sánh một giá trị với một tập hợp các giá trị được trả về từ câu truy vấn phụ:
+
+			IN: Chỉ được so sánh bằng, chọn ra dữ liệu trùng với một trong các dữ liệu được liệt kê trong tập hợp.
+
+			ALL: Được sử dụng các toán tử so sánh còn lại (<>, >, <,...), chọn ra dữ liệu phải thoả mãn điều kiện với tất cả dữ liệu trong tập hợp.
+				- Điều kiện so sánh sẽ trả về TRUE nếu tất cả các giá trị trong tập hợp đều thỏa mãn điều kiện so sánh.
+				- Nếu câu truy vấn phụ là rỗng, không có giá trị nào để so sánh, điều kiện so sánh với ALL sẽ mặc định là TRUE.
+				- Nghĩa là nếu đem một giá trị đi so sánh với tập hợp các giá trị trong câu truy vấn phụ (và câu truy vấn phụ trả về kết quả rỗng) thì giá trị đó {=, >, <,...} so với với tất cả giá trị trong truy vấn phụ.
+
+			ANY/ SOME: Được sử dụng các toán tử so sánh còn lại, chọn ra dữ liệu thoả mãn điều kiện với một trong các dữ liệu được liệt kê trong tập hợp.
+				- Điều kiện so sánh sẽ trả về TRUE nếu bất kỳ giá trị nào trong tập hợp thỏa mãn điều kiện so sánh.
+				- Nếu câu truy vấn phụ là rỗng, không có giá trị nào để so sánh, điều kiện so sánh với ANY/ SOME sẽ mặc định là FALSE.
+				- Nghĩa là nếu đem một giá trị đi so sánh với tập hợp các giá trị trong câu truy vấn phụ (và câu truy vấn phụ trả về kết quả rỗng) thì giá trị đó KHÔNG {=, >, <,...} so với với bất kì giá trị nào trong truy vấn phụ.
+
+			Ví dụ: Liệt kê những đơn hàng do những nhân viên có quê ở Luân Đôn phụ trách.
 			
-			-- Lấy được ra danh sách những nhân viên có quê ở Luân Đôn
-			SELECT * FROM Employees WHERE City = 'London'
-			
-			-- Trả về danh sách những giá trị của cùng một cột
-			-- là mã nhân viên của những nhân viên có quê là Luân Đôn
-			SELECT EmployeeID FROM Employees WHERE City = 'London'
-			
-			---- * Câu hỏi gián tiếp: Những đơn hàng do những nhân viên quê ở Luân Đôn phụ trách
-			SELECT * FROM Orders
+				---- * Câu hỏi trực tiếp: Danh sách các nhân viên có quê ở Luân Đôn
+				
+				-- Lấy được ra danh sách những nhân viên có quê ở Luân Đôn
+				SELECT *
+				FROM Employees
+				WHERE City = 'London'
+				
+				-- Trả về danh sách những giá trị của cùng một cột
+				-- là mã nhân viên của những nhân viên có quê là Luân Đôn
+				SELECT EmployeeID
+				FROM Employees
+				WHERE City = 'London'
+				
+				---- * Câu hỏi gián tiếp: Những đơn hàng do những nhân viên quê ở Luân Đôn phụ trách
+				SELECT *
+				FROM Orders
 
-			-- Lấy câu truy vấn trả về giá trị là danh sách mã nhân viên
-			-- gán vào nơi nhận giá trị đầu vào là một tập hợp mã nhân viên
-					-- ≈ EmployeeID IN (5, 6, 7, 9)
-			WHERE EmployeeID IN (
-						SELECT EmployeeID FROM Employees
-						WHERE City = 'London'
-					    )
+				-- Lấy câu truy vấn trả về giá trị là danh sách mã nhân viên
+				-- gán vào nơi nhận giá trị đầu vào là một tập hợp mã nhân viên
+				-- ≈ WHERE EmployeeID IN (5, 6, 7, 9)
+				WHERE EmployeeID IN (
+							SELECT EmployeeID FROM Employees
+							WHERE City = 'London'
+						    )
 
-------------------------------------------------------------
+----------------------------------------
 
-ALL và ANY
+ALL và ANY/ SOME
 
 * ALL: Kiểm tra từng dòng và đảm bảo phải thoả mãn hết tất cả các giá trị trong tập hợp.
 
-Tìm số lớn / bé nhất trong một tập hợp:
-	- Lớn / Bé hơn tất cả các số còn lại.
-	- Bằng chính mình.
-	- Thường sẽ chỉ trả về một kết quả, nhưng nếu có nhiều giá trị cùng lớn / bé thì sẽ có nhiều kết quả cùng được trả về.
-	-> Lớn / Bé hơn tất cả, ngoại trừ chính mình.
+Tìm số lớn/ bé nhất trong một tập hợp:
+	- Lớn/ Bé hơn tất cả các số còn lại và bằng chính mình.
+	- Thường sẽ chỉ trả về một kết quả, nhưng nếu có nhiều giá trị cùng lớn/ bé thì sẽ có nhiều kết quả cùng được trả về.
+
+	-> Lớn/ Bé hơn tất cả, ngoại trừ chính mình.
 
 	Ví dụ: Tìm số lớn nhất bằng toán tử ALL.
 
 		-- Tập hợp các số nguyên tố
-		SELECT * FROM Num
+		SELECT *
+		FROM Num
 
 		-- Tìm số lớn nhất trong tập hợp
 		-- bằng cách lấy từng dòng giá trị ra và đi so sánh
 		-- để tìm ra xem giá trị nào
 		-- lớn hơn tất cả và bằng chính mình.
-							-- Danh sách dãy các số nguyên tố
-		SELECT * FROM Num WHERE Numbr >= ALL (
-							SELECT * FROM Num
-						     )
+			    -- Danh sách dãy số nguyên tố
+		SELECT *
+		FROM Num
+		WHERE Numbr >= ALL (
+					SELECT *
+					FROM Num
+				   )
+
+* ANY/ SOME:
+
+	Ví dụ: Tìm tất cả sản phẩm có giá cao hơn bất kì sản phẩm điện tử nào.
+
+		SELECT *
+		FROM Products
+		WHERE Price > ANY (
+					SELECT DISTINCT Price
+					FROM Products
+					WHERE Category = 'Electronics'
+				  )
+
+------------------------------------------------------------
+
+[CÂU TRUY VẤN LỒNG TRONG MỆNH ĐỀ SELECT]
+
+	Ví dụ: Lập danh sách nhân viên có mức lương cao hơn lương trung bình và cho biết nhân viên đó đã vượt bao nhiêu.
+
+		-- Câu truy vấn phụ được lồng trong SELECT
+		-- giúp tính mức lương chênh lệch của nhân viên
+		-- so với mức lương trung bình
+		SELECT EmployeeID, LastName, FirstName, Title,
+		       Salary - (
+					SELECT AVG(Salary)
+					FROM Employees
+				) AS 'Lương chênh lệch'
+		FROM Employees
+		WHERE Salary > (
+					SELECT AVG(Salary)
+					FROM Employees
+			       )
+
+------------------------------------------------------------
+
+[CÂU TRUY VẤN LỒNG TRONG MỆNH ĐỀ FROM]
+
+Vì mệnh đề FROM nhận vào một bảng, nên miễn là câu truy vấn SELECT có trả về kết quả là một bảng, thì có thể được lồng vào bên trong FROM.
+
+	- Mệnh đề FROM yêu cầu một tên bảng. Vì vậy, sau khi thay thế bằng một câu truy vấn (được xem là một biểu thức tính toán và kết quả trả về là một bảng, nhưng lại chưa có tên), ta phải đặt một tên giả bằng câu lệnh AS để có thể tham chiếu trong mệnh đề WHERE ở phía sau.
+
+	- Về mặt hiệu năng, câu truy vấn lồng thường sẽ chạy chậm hơn.
+		+ Vì cơ bản thì đều là những câu lệnh độc lập, cần được tính toán trước và sau đó phối hợp với nhau.
+		+ Vì vậy, nếu sử dụng những hàm có sẵn thì bộ lập lịch của Database Engine sẽ dễ dàng tính toán thuật toán để tối ưu và thay đổi giá trị khi đang hoàn toàn nằm trong một câu truy vấn.
+
+	Ví dụ: Đếm số lượng thành phố xuất hiện (không trùng) của bảng nhân viên.
+
+		-- Câu lệnh trả về kết quả là một cột thành phố không trùng nhau
+		SELECT DISTINCT City
+		FROM Employees
+
+		-- Đếm số lượng thành phố dựa trên một biểu thức đã được đặt tên giả
+		SELECT COUNT(*)
+		FROM (
+			SELECT DISTINCT City
+			FROM Employees
+		     ) AS Cities
 
 ==========================================================================================
 
-[TOÁN TỬ KẾT TẬP / HÀM GOM NHÓM - AGGREGATE FUNCTION]
+[HÀM TẬP HỢP/ THỐNG KÊ - AGGREGATE FUNCTION]
 
-Là những phép toán / hình thức để gom / kết hợp (aggregation) dữ liệu.
+Là những phép toán/ hình thức để thống kê/ tập hợp (aggregation) dữ liệu.
 
-Trong Database Engine, câu lệnh SELECT ngoài việc đảm nhận nhiệm vụ hiển thị, còn hỗ trợ một loạt các hàm với nhiệm vụ gom dữ liệu (theo một nhóm dòng / cột) và tính toán trên nhóm dữ liệu đã gom được.
+Trong Database Engine, câu lệnh SELECT ngoài việc đảm nhận nhiệm vụ hiển thị, còn hỗ trợ một loạt các hàm với nhiệm vụ gom dữ liệu (theo một nhóm dòng - cột) và tính toán trên nhóm dữ liệu đã gom được.
 
-Bao gồm những hàm:
-	COUNT()
-	SUM()
-	MIN()
-	MAX()
-	AVG()
+	- Bao gồm những hàm:
+
+		+ Chỉ dùng được cho số:
+			SUM()
+			AVG()
+
+		+ Dùng được cho cả những giá trị số và chuỗi:
+			COUNT()
+			MIN()
+			MAX()
+
+	- Chỉ dùng được sau mệnh đề SELECT và HAVING.
+
+------------------------------------------------------------
 
 * Cú pháp chuẩn:
-	SELECT [Tên các cột, cách nhau bởi dấu phẩy], HÀM GOM NHÓM()
-	FROM [Tên bảng]
-	WHERE...
+	SELECT <Danh sách cột>, HÀM-THỐNG-KÊ()
+	FROM <Danh sách bảng>
+	WHERE ...
 
 * Cú pháp mở rộng: Sử dụng GROUP BY.
-	SELECT [Tên các cột, cách nhau bởi dấu phẩy], HÀM GOM NHÓM()
-	FROM [Tên bảng]
-	WHERE...
-	GROUP BY [Gom theo cụm cột nào]
+	SELECT <Danh sách cột>, HÀM-THỐNG-KÊ()
+	FROM <Danh sách bảng>
+	WHERE ...
+	GROUP BY <Danh sách cột cần gom nhóm>
 
 * Cú pháp mở rộng: Sử dụng HAVING.
-	SELECT [Tên các cột, cách nhau bởi dấu phẩy], HÀM GOM NHÓM()
-	FROM [Tên bảng]
-	WHERE...
-	GROUP BY [Gom theo cụm cột nào]
-	HAVING...
+	SELECT <Danh sách cột>, HÀM-THỐNG-KÊ()
+	FROM <Danh sách bảng>
+	WHERE ...
+	GROUP BY <Danh sách cột cần gom nhóm>
+	HAVING ..., HÀM-THỐNG-KÊ()
 
 --------------------------------------------------------------------------------
 
-[HÀM ĐẾM - COUNT()]
+	[HÀM ĐẾM - COUNT()]
 
-Được sử dụng để đếm số lần xuất hiện của một thứ gì đó trong một cột.
+COUNT <Tên cột>: Đếm trong phạm vi của một cột.
 
-	- Thực hiện tính toán và đếm theo dạng cột (từ trên xuống dưới), thay vì dạng dòng (từ phải sang trái) như các phép toán thông thường.
+	- Được sử dụng để đếm số lần xuất hiện của các giá trị trong một cột.
 
-	- Muốn hiển thị thứ gì thì gom nhóm (GROUP BY) theo thứ đó.
+		+ Nhận tham số là một cột, sau đó thực hiện đếm theo dạng cột (từ trên xuống dưới), thay vì dạng dòng (từ phải sang trái) như các phép toán thông thường.
 
-COUNT(*): Đếm số dòng đang có trong bảng (vì dấu * đại diện cho tất cả các cột), không quan tâm đến tiêu chuẩn nào khác.
+		+ Trong quá trình đếm, không quan tâm dữ liệu có bị trùng hay không. Vì vậy, cần sử dụng thêm từ khoá DISTINCT (trong phần tham số của câu lệnh đếm) để loại bỏ đi những dòng giá trị bị trùng.
 
-	- Dù dòng đang đếm có chứa trạng thái NULL, nhưng miễn là có một ô trong cột nào đó khác NULL, thì cũng được tính là một dòng.
+		Ví dụ: Đếm số lượng nhân viên làm việc trong các dự án, nhưng loại bỏ đi những nhân viên trùng.
 
-	- Nếu toàn bộ giá trị trong dòng đều NULL thì sẽ không được tính là một dòng.
+			SELECT COUNT(DISTINCT EmployeeID)
+			FROM WorksOn
+
+COUNT(*): Đếm số dòng đang có trong bảng (không phải đếm riêng cho cột nào, vì dấu sao '*' đại diện cho tất cả các cột), không quan tâm đến tiêu chuẩn nào khác.
+
+	- Với các phép toán gom nhóm khác (kể cả với hàm COUNT()), giá trị NULL sẽ được tự động loại bỏ trước khi thực hiện tính toán, vì các tính toán đều phải dựa trên sự xuất hiện của giá trị và NULL lại không được xem là sự xuất hiện - không thể đếm được.
+
+		-> NULL là thứ không thể đếm được.
+
+	- Nếu muốn đếm ô chứa trạng thái NULL, COUNT(*) là phép toán duy nhất làm được điều này.
+		+ Kết quả trả về là cả một dòng chứ không phải cột chứa giá trị NULL.
+		+ COUNT(*) vẫn tính là một dòng, miễn là có một cột nào đó trên dòng khác NULL.
+		+ COUNT(*) chỉ không tính là một dòng khi toàn bộ giá trị trong dòng đều NULL.
+
+		-> Đếm sự xuất hiện của cả dòng thay vì trực tiếp đếm NULL trong cột.
 
 COUNT(*) FROM... WHERE...: Chọn ra những dòng thoả tiêu chí của bộ lọc WHERE trước rồi mới bắt đầu đếm (lọc rồi mới đếm).
 
-COUNT [Tên cột nào đó]: Đếm trong phạm vi của một cột.
+--------------------------------------------------------------------------------
 
-	- Nếu ô nào đó của cột mà chứa trạng thái NULL thì sẽ không được tính, vì đang đếm dựa trên sự xuất hiện của giá trị và NULL lại không được xem là sự xuất hiện.
+	[CÁC HÀM TÍNH TOÁN TRÊN SỐ - SUM() / MIN() / MAX() / AVG()]
 
-	- Nếu muốn đếm ô chứa trạng thái NULL, ta có thể sử dụng cú pháp COUNT(*) để lấy ra được cả dòng và sau đó kết hợp với WHERE để lọc ra đúng dòng cần đếm, vì NULL là thứ không thể đếm được.
-		-> Đếm sự xuất hiện của dòng thay vì trực tiếp đếm NULL.
+Chỉ có thể sử dụng trên những số liệu có thể tính toán được.
 
-----------------------------------------
+Cách sử dụng tương tự COUNT() khi cũng tính toán các giá trị theo dạng cột (từ trên xuống dưới).
 
-Nếu trong câu hỏi có chứa từ khoá "mỗi (each)" thì cách viết phải có sư thay đổi.
-	-> Chia để trị (chia cụm để gom và đếm).
+* Tìm giá trị nhỏ nhất - MIN().
 
-	- Có nhiệm vụ gom những thứ giống nhau của một cột vào cùng một nhóm, sau đó cho phép sử dụng hàm COUNT() để đếm số lượng của mỗi nhóm vừa gom.
+	Ví dụ: Tìm trọng lượng nhẹ nhất trong cột trọng lượng
+		SELECT MIN(Freight) AS [Smallest freight]
+		FROM Orders
 
-	- Lấy giá trị trong cột ra để chia nhóm, sau đó tính đếm hoặc tính toán trên dòng.
+* Tìm giá trị lớn nhất - MAX().
 
-	- Mặc dù trạng thái NULL không phải là giá trị để có thể đếm hoặc tính toán, nhưng vẫn có thể chia nhóm được.
+	Ví dụ: Tìm trọng lượng nặng nhất trong cột trọng lượng
+		SELECT MAX(Freight) AS [Highest freight]
+		FROM Orders
 
-	- Ngoại trừ hàm COUNT(), trong câu lệnh SELECT có xuất hiện bất kì cột nào - nghĩa là sẽ thực hiện việc đếm trên cột này, thì trong mệnh đề GROUP BY cũng phải có những cột giống vậy. Điều này giúp đảm bảo tính hợp lý: gom và đếm theo số cột đang hiển thị, còn gom và đếm cột đang không hiển thị là vô nghĩa.
+* Tính tổng - SUM().
 
-		Ví dụ: Đếm xem MỖI thành phố có bao nhiêu nhân viên.
+	Ví dụ: Tính tổng trọng lượng trong cột trọng lượng
+		SELECT SUM(Freight) AS [Freight in total]
+		FROM Orders
 
-			-- Gom những thành phố trùng nhau thành cùng một nhóm,
-			-- Sau đó tiến hành đếm số nhân viên của mỗi nhóm
-			SELECT Country, City, COUNT(City) AS [Number of employees]
-			FROM Employees
-			GROUP BY Country, City
+* Tính trung bình cộng - AVG().
 
-	- Nếu gom nhóm theo cột khoá chính, thì việc này là vô nghĩa, vì khoá chính đã đảm bảo mỗi dòng là một nhóm riêng. Vì vậy, chỉ nên đếm trên những cột có khả năng đếm.
+	Ví dụ: Tính trọng lượng trung bình trong cột trọng lượng
+		SELECT AVG(Freight) AS [Freight in average]
+		FROM Orders
 
-		Ví dụ:
-			- "Mã số nhân viên" -> Không có gì để đếm
-			- "Mã chuyên ngành" -> Đếm số sinh viên thuộc chuyên ngành
-			- "Mã quốc gia" -> Đếm số đơn hàng của tỉnh
-			- "Điểm thi" -> Đếm số lượng sinh viên đạt được điểm cao
+--------------------------------------------------------------------------------
+
+[GROUP BY]
 
 * Cú pháp:
-	GROUP BY [Tên các cột, cách nhau bởi dấu phẩy]
+	GROUP BY <Danh sách cột cần gom nhóm>
+
+		- Được dùng để gom nhóm dữ liệu trước khi thực hiện các thao tác thống kê.
 
 		Ví dụ: Đếm xem MỖI thành phố có bao nhiêu nhân viên.
 
@@ -4783,13 +5197,122 @@ Nếu trong câu hỏi có chứa từ khoá "mỗi (each)" thì cách viết ph
 			FROM Employees
 			GROUP BY City
 
-----------------------------------------
+				---------------------------------------
+				| City		| Number of employees |
+				|---------------+---------------------|
+				| Kirkland	|	1	      |
+				| London	|	4	      |
+				| Redmond	|	1	      |
+				| Seattle	|	2	      |
+				| Tacoma	|	1	      |
+				---------------------------------------
+
+Nếu trong câu hỏi có chứa từ khoá "mỗi (each)" thì cách viết phải có sự thay đổi.
+	-> Chia để trị (chia cụm để gom và đếm).
+
+	- Lấy giá trị trong cột ra để chia nhóm, sau đó đếm hoặc tính toán trên dòng.
+
+		Ví dụ: Mỗi nhân viên tham gia nhiều dự án.
+			-> Gom các mã nhân viên trùng nhau lại thành một nhóm.
+				- Đếm số lượng nhân viên có tham gia dự án.
+				- Đếm tổng số dự án mà một nhân viên tham gia.
+				- ...
+
+	- Có nhiệm vụ gom những thứ giống nhau của một cột vào cùng một nhóm, sau đó cho phép sử dụng hàm thống kê (ví dụ: COUNT()) để đếm và tính toán số lượng của mỗi nhóm vừa gom.
+
+	- Mặc dù trạng thái NULL không phải là giá trị để có thể đếm hoặc tính toán, nhưng vẫn có thể chia nhóm được.
+
+		Ví dụ: Đếm số quốc gia và gom nhóm theo vùng, miền trong bảng nhân viên.
+
+			-------------------------
+			| Region | TotalCountry	|
+			|--------+--------------|
+			| NULL	 |	4	|
+			| WA	 |	5	|
+			-------------------------
+
+	- Nếu đã có GROUP BY thì mệnh đề SELECT không còn được phép sử dụng dấu sao '*' để đại diện cho tất cả các cột, lúc này, các cột trong bảng hoặc các hàm thống kê trên cột sẽ được liệt kê trong SELECT.
+
+	- Trong mệnh đề SELECT có xuất hiện bất kì cột nào khác ngoài các hàm thống kê - nghĩa là sẽ thực hiện việc đếm trên các cột này.
+		+ Trong mệnh đề GROUP BY cũng phải có những cột giống vậy (không bao gồm hàm thống kê).
+		+ Điều này giúp đảm bảo tính hợp lý: gom và đếm theo số cột đang hiển thị, còn gom và đếm cột đang không hiển thị là vô nghĩa.
+		+ Nhưng ngược lại, nếu trong mệnh đề GROUP BY có nhiều cột hơn trong mệnh đề SELECT thì vẫn được phép.
+
+		Ví dụ: Đếm xem MỖI thành phố có bao nhiêu nhân viên.
+
+			-- Gom những thành phố trùng nhau thành cùng một nhóm,
+			-- sau đó tiến hành đếm số nhân viên của mỗi nhóm
+			SELECT Country, City, COUNT(City) AS [Number of employees]
+			FROM Employees
+			GROUP BY Country, City
+
+				-----------------------------------------------
+				| Country | City	| Number of employees |
+				|---------+-------------+---------------------|
+				| USA	  | Kirkland	|	1	      |
+				| UK	  | London	|	4	      |
+				| USA	  | Redmond	|	1	      |
+				| USA	  | Seattle	|	2	      |
+				| USA	  | Tacoma	|	1	      |
+				-----------------------------------------------
+
+	- Cũng giống như ORDER BY, thứ tự các cột được liệt kê trong GROUP BY cũng sẽ ảnh hưởng đến kết quả hiển thị.
+		+ Mệnh đề SELECT sẽ quyết định thứ tự kết quả được hiển thị ra.
+		+ Mệnh đề GROUP BY quyết định thứ tự gom nhóm và thống kê.
+
+		Ví dụ: Đếm xem MỖI thành phố có bao nhiêu nhân viên.
+
+			-- SELECT Country, City
+			-- GROUP BY Country, City
+			SELECT Country, City, COUNT(City) AS [Number of employees]
+			FROM Employees
+			GROUP BY Country, City
+
+				-----------------------------------------------
+				| Country | City	| Number of employees |
+				|---------+-------------+---------------------|
+				| USA	  | Kirkland	|	1	      |
+				| UK	  | London	|	4	      |
+				| USA	  | Redmond	|	1	      |
+				| USA	  | Seattle	|	2	      |
+				| USA	  | Tacoma	|	1	      |
+				-----------------------------------------------
+
+			-- SELECT Country, City
+			-- GROUP BY City, Country
+			SELECT Country, City, COUNT(City) AS [Number of employees]
+			FROM Employees
+			GROUP BY City, Country
+
+				-----------------------------------------------
+				| Country | City	| Number of employees |
+				|---------+-------------+---------------------|
+				| UK	  | London	|	4	      |
+				| USA	  | Kirkland	|	1	      |
+				| USA	  | Redmond	|	1	      |
+				| USA	  | Seattle	|	2	      |
+				| USA	  | Tacoma	|	1	      |
+				-----------------------------------------------
+
+	- Việc gom nhóm theo cột khoá chính là vô nghĩa vì khoá chính đã đảm bảo mỗi dòng là một nhóm riêng. Vì vậy, chỉ nên đếm trên những cột có khả năng đếm.
+
+		Ví dụ:
+			- "Mã số nhân viên" -> Không có gì để đếm
+			- "Mã chuyên ngành" -> Đếm số sinh viên thuộc chuyên ngành
+			- "Mã quốc gia" -> Đếm số đơn hàng của tỉnh
+			- "Điểm thi" -> Đếm số lượng sinh viên đạt được điểm cao
+
+------------------------------------------------------------
+
+[HAVING]
 
 Nếu trong quá trình đếm và gom nhóm lại phát sinh nhu cầu lọc dữ liệu (cần lọc dữ liệu đến hai lần).
 
-	- Ta không thể trực tiếp sử dụng WHERE như thông thường, mà phải sử dụng HAVING.
+	- Những điều kiện lọc này chỉ áp dụng lên từng nhóm, nên ta không thể trực tiếp sử dụng WHERE như thông thường, mà phải sử dụng HAVING.
 
-	- Cũng là bộ lọc giống như WHERE, nhưng được đổi tên để tránh trị trùng, chỉ được sử dụng sau khi đã đếm và gom nhóm xong.
+	- HAVING cũng là bộ lọc giống như WHERE, nhưng được đổi tên để tránh bị trùng, chỉ được sử dụng sau khi đã gom nhóm trong SELECT xong.
+
+	- Có thể hiểu, sau khi gom nhóm bằng GROUP BY, kết quả trả về sẽ là một bảng đặc biệt và để lọc điều kiện từ bảng này thì ta bắt buộc phải sử dụng HAVING.
 
 	- Vì là bộ lọc và có kết hợp với các toán tử so sánh, nên mệnh đề HAVING cũng được phép có những câu lệnh lồng bên trong.
 
@@ -4823,62 +5346,70 @@ Nếu trong quá trình đếm và gom nhóm lại phát sinh nhu cầu lọc d�
 							GROUP BY City
 						  )
 
-------------------------------------------------------------
+―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
+│	WHERE được dùng để kiểm tra điều kiện trước GROUP BY	│
+│	HAVING được dùng để kiểm tra điều kiện sau GROUP BY	│
+―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
-[CÂU TRUY VẤN LỒNG TRONG MỆNH ĐỀ FROM]
+==========================================================================================
 
-Vì mệnh đề FROM nhận vào một bảng, nên miễn là câu truy vấn SELECT có trả về kết quả là một bảng, thì có thể được lồng vào bên trong FROM.
+[CÁC PHÉP TOÁN TRÊN TẬP HỢP]
 
-	- Mệnh đề FROM yêu cầu một tên bảng. Vì vậy, sau khi thay thế bằng một câu truy vấn (được xem là một biểu thức tính toán và kết quả trả về là một bảng, nhưng lại chưa có tên), ta phải đặt một tên giả bằng câu lệnh AS để có thể tham chiếu trong mệnh đề WHERE ở phía sau.
-
-	Ví dụ: Đếm số lượng thành phố xuất hiện (không trùng) của bảng nhân viên.
-
-		-- Câu lệnh trả về kết quả là một cột thành phố không trùng nhau
-		SELECT DISTINCT City FROM Employees
-
-		-- Đếm số lượng thành phố dựa trên một biểu thức đã được đặt tên giả
-		SELECT COUNT(*)
-		FROM (SELECT DISTINCT City FROM Employees) AS Cities
+Các phép toán trên tập hợp trong SQL cũng giống như trong ĐSQH khi sẽ tự động loại bỏ đi những dòng dữ liệu bị trùng.
 
 --------------------------------------------------------------------------------
 
-[CÁC HÀM TÍNH TOÁN TRÊN SỐ - SUM() / MIN() / MAX() / AVG()]
+1. PHÉP HỘI (UNION):
 
-Chỉ có thể sử dụng trên những số liệu có thể tính toán được. Cũng thực hiện tính toán theo dạng cột (từ trên xuống dưới).
+	Ví dụ: Liệt kê tên các nhân viên thuộc đơn vị 1 hoặc 2.
 
-	- Cách sử dụng tương tự COUNT() khi cũng tính toán các giá trị của một cột.
+		SELECT FirstName
+		FROM Employees
+		WHERE DNum = 1
 
-	- Về mặt hiệu năng, câu truy vấn lồng thường sẽ chạy chậm hơn, vì cơ bản thì đều là những câu lệnh độc lập, cần được tính toán trước và sau đó phối hợp với nhau. Vì vậy, nếu sử dụng những hàm có sẵn thì bộ lập lịch của Database Engine sẽ dễ dàng tính toán thuật toán để tối ưu và thay đổi giá trị khi đang hoàn toàn nằm trong một câu truy vấn.
+		UNION
 
-* Tìm giá trị nhỏ nhất - MIN().
+		SELECT FirstName
+		FROM Employees
+		WHERE DNum = 2
 
-	Ví dụ: Tìm trọng lượng nhẹ nhất trong cột trọng lượng
-		SELECT MIN(Freight) AS [Smallest freight]
-		FROM Orders
+--------------------------------------------------------------------------------
 
-* Tìm giá trị lớn nhất - MAX().
+2. PHÉP GIAO (INTERSECT):
 
-	Ví dụ: Tìm trọng lượng nặng nhất trong cột trọng lượng
-		SELECT MAX(Freight) AS [Highest freight]
-		FROM Orders
+	Ví dụ: Liệt kê danh sách mã nhân viên tham gia cả hai dự án 1 và 2.
 
-* Tính tổng - SUM().
+		SELECT EmployeeID
+		FROM WorksOn
+		WHERE PNum = 1
 
-	Ví dụ: Tính tổng trọng lượng trong cột trọng lượng
-		SELECT SUM(Freight) AS [Freight in total]
-		FROM Orders
+		INTERSECT
 
-* Tính trung bình cộng - AVG().
+		SELECT EmployeeID
+		FROM WorksOn
+		WHERE PNum = 2
 
-	Ví dụ: Tính trọng lượng trung bình trong cột trọng lượng
-		SELECT AVG(Freight) AS [Freight in average]
-		FROM Orders
+--------------------------------------------------------------------------------
+
+3. PHÉP TRỪ (EXCEPT):
+
+	Ví dụ: Liệt kê tên mã số các nhân viên chỉ tham gia dự án 1 và không tham gia dự án 2.
+
+		SELECT EmployeeID
+		FROM WorksOn
+		WHERE PNum = 1
+
+		EXCEPT
+
+		SELECT EmployeeID
+		FROM WorksOn
+		WHERE PNum = 2
+
+--------------------------------------------------------------------------------
 
 ==========================================================================================
-==========================================================================================
-==========================================================================================
 
-[KẾT NỐI CÁC BẢNG - SQL JOIN]
+[KẾT NỐI CÁC BẢNG VỚI SQL JOIN]
 
 Vì những kỹ thuật thiết kế mà dữ liệu sẽ được tách ra và nằm rải rác ở các bảng khác nhau. Vì vậy, ta cần sử dụng JOIN để có thể cùng một lúc tương tác trên những bảng có liên hệ với nhau.
 
@@ -4903,14 +5434,19 @@ Vì những kỹ thuật thiết kế mà dữ liệu sẽ được tách ra và
 	- Vì hai bảng khác nhau có quyền đặt tên cột trùng nhau, nên khi ghép lại sẽ có hiện tượng tên cột bị trùng và gây bối rối (ambiguous). Vì vậy, để tránh nhầm lẫn cũng như tránh bị trùng lặp, ta cần phải:
 
 		+ Chỉ định cột thuộc bảng nào (tham chiếu cột qua tên bảng), giống như dấu chấm trong lập trình hướng đối tượng (OOP).
+
 			Ví dụ: Ghép bảng bằng CROSS JOIN
+
 				-- Sắp xếp theo cột Nmbr của bảng VnDict
 				-- (tránh nhầm với cột Nmbr của bảng EnDict)
-				SELECT * FROM VnDict, EnDict
+				SELECT *
+				FROM VnDict, EnDict
 				ORDER BY VnDict.Nmbr
 
-		+ Đặt tên giả (Alias) cho bảng để tham chiếu cho các cột. Có thể đặt một tên giả vừa đủ ngắn, vì tên thật của bảng có thể rất dài và không tiện trong việc tham chiếu.
+		+ Đặt tên giả (Alias) cho bảng để tham chiếu cho các cột. Nên đặt một tên tắt, vì tên thật của bảng có thể rất dài và không tiện trong việc tham chiếu.
+
 			Ví dụ: Ghép bảng bằng CROSS JOIN
+
 				-- Có sử dụng AS
 				SELECT vn.Nmbr, vn.VnDesc, en.EnDesc
 				FROM VnDict AS vn, EnDict AS en
@@ -5241,6 +5777,8 @@ Bước 06: Chuyển thành những câu lệnh SQL.
 
 
 ==========================================================================================
+==========================================================================================
+==========================================================================================
 
 [DẠNG CHUẨN - NORMAL FORM / DATABASE NORMALIZATION]
 
@@ -5250,6 +5788,8 @@ Bước 06: Chuyển thành những câu lệnh SQL.
 
 -- Cần bao nhiêu bảng là đủ?
 
+==========================================================================================
+==========================================================================================
 ==========================================================================================
 
 * Tham khảo thêm:
@@ -5263,6 +5803,9 @@ Bước 06: Chuyển thành những câu lệnh SQL.
 		+ https://opentextbc.ca/dbdesign01/front-matter/preface/
 
 	- Học cách viết SQL: https://viblo.asia/s/tu-con-ga-den-master-sql-GyZJZlY2Vjm
+
+	- Thực hành SQL - Tran Huong CNTT
+: https://www.youtube.com/playlist?list=PLLXCN-2OVrTsciN96pCFXMtD3OwA3XMJF
 
 	- Video bài giảng KMA: https://youtube.com/playlist?list=PLSe6_C9mboBDG8wVFZfSycRQnS51T0H3M&si=JAZKPaot1Fp3egHN
 
