@@ -512,7 +512,7 @@ Vì là một phần mềm nên Database Engine (HQTCSDL) còn hỗ trợ:
 
 	4. Câu lệnh để xử lý dữ liệu (SQL): các câu lệnh được dùng để xử lý những dữ liệu nằm trong bảng.
 
-	5. Toán tử so sánh (Comparison Operator): =, >, >=, <, <=, !=, <>
+	5. Toán tử so sánh (Comparison Operator): =, <>, >, >=, <, <=
 
 		- Nếu có nhiều điều kiện lọc đi kèm, có thể sử dụng thêm những toán tử luận lý (Logical Operators).
 
@@ -522,7 +522,7 @@ Vì là một phần mềm nên Database Engine (HQTCSDL) còn hỗ trợ:
 			* Mệnh đề (Clause): Một câu phát biểu hoặc một biểu thức so sánh (+, -, >, <, =, IS...) với ý nghĩa đúng / sai.
 				Ví dụ: "Số 8 là số chẵn" là một mệnh đề đúng.
 
-		- Đặc biệt, để thay thế cho toán tử khác (!= và <>) với nhiệm vụ đảo ngược một điều đang diễn ra, ta có thể sử dụng đảo mệnh đề bằng toán tử NOT.
+		- Đặc biệt, để thay thế cho toán tử khác (<>) với nhiệm vụ đảo ngược một điều đang diễn ra, ta có thể sử dụng đảo mệnh đề bằng toán tử NOT.
 			+ Toán tử NOT sẽ thường đi kèm với mệnh đề.
 
 	-> Cuối cùng vẫn chỉ trả về dữ liệu thô.
@@ -2035,7 +2035,7 @@ Nếu giá trị trong một ô trả về NULL (có màu vàng), sẽ được 
 			- Một người chắc chắn có năm sinh, nhưng họ muốn che giấu thông tin này.
 			- Một bệnh nhân không muốn tiết lộ thông tin về nhóm máu của mình.
 
-	3. Vô nghĩa (Inapplicable value): Không có ý nghĩa trong một ngữ cảnh nào đó.
+	3. Vô nghĩa/ Không phù hợp để áp dụng (Inapplicable/ Not Applicable - N/A value): Không có ý nghĩa trong một ngữ cảnh nào đó.
 
 		Ví dụ:
 			- Thông tin về "Số lần mang thai" trong hồ sơ y tế của các bệnh nhân nam là vô nghĩa.
@@ -2918,14 +2918,19 @@ Trên thực tế, có rất nhiều cách để phân loại các phép toán c
 
 				- Một số khái niệm có liên quan:
 
-					* Cột kết nối (Join Attribute): Là cột được sử dụng để kết nối.
+					* Cột kết nối/ Cột chung (Join Attribute/ Common Column): Là cột gồm những dòng chứa bên trong những giá trị tương quan (hợp cạ / hợp rơ) nhau giữa hai bảng.
 						- Có thể là cột chung (cùng miền giá trị) giữa hai bảng.
 						- Cũng có thể là hai cột riêng biệt, nhưng lúc này, kết quả có thể không như mong đợi hoặc không hợp lý.
+						- Không quan trọng tên cột, chỉ quan tâm dữ liệu bên trong có sự tương đồng để có thể tiến hành ghép.
 
-					* Điều kiện kết nối (Join Condition): Là một mệnh đề mô tả cách thức kết nối giữa các cột bằng toán tử so sánh.
+						-> Cột được sử dụng để kết nối.
+
+					* Điều kiện kết nối/ Tiêu chuẩn ghép (Join Condition): Là một mệnh đề mô tả cách thức kết nối giữa các cột bằng toán tử so sánh.
 						- Có thể bao gồm cả toán tử luận lý AND và OR.
 						- Điều kiện kết nối sẽ trả về giá trị luận lý (TRUE, FALSE, hoặc NULL).
 						- Chỉ những kết quả thoả điều kiện (là TRUE) thì mới được chọn, những kết quả không thoả (có thể là FALSE hoặc đang mang giá trị NULL) sẽ không được chọn.
+
+						-> Điều kiện của cột để ghép nối.
 
 						Ví dụ:
 							NhanVien ⋈ (NhanVien.MaPB = PhongBan.MaPB AND TenPB = 'CNTT') PhongBan
@@ -3000,7 +3005,7 @@ Trên thực tế, có rất nhiều cách để phân loại các phép toán c
 
 					- Sử dụng kí hiệu là '*' thay vì '⋈'.
 					- Là một trường hợp đặc biệt của phép kết tương đương, nhưng tự động bỏ đi cột bị trùng.
-					- Không chỉ định tên cột, nên chỉ kết nối khi hai cột có cùng tên và có cùng kiểu dữ liệu.
+					- Không cần chỉ định điều kiện kết nối (tên cột), nên chỉ kết nối khi hai cột có cùng tên và có cùng kiểu dữ liệu (ngầm định tìm thuộc tính tương đương của hai bên để so sánh bằng).
 						+ Nếu khác tên, cần thực hiện phép đổi tên trước khi thực hiện phép kết.
 						+ Nếu khác kiểu, chỉ kết nối được khi kiểu dữ liệu này có thể ép kiểu được.
 
@@ -3027,33 +3032,34 @@ Trên thực tế, có rất nhiều cách để phân loại các phép toán c
 
 				* Trong SQL, các bảng cần kết nối sẽ liệt kê trong mệnh đề FROM:
 
-					- Điều kiện kết nối (so sánh) sẽ được viết trong mệnh đề WHERE.
+					1. Điều kiện kết nối (so sánh) sẽ được viết chung trong mệnh đề FROM.
+						+ Được thêm vào trong SQL2.
+						+ Giúp phân biệt rõ ràng giữa các điều kiện JOIN với các điều kiện lựa chọn trong mệnh đề WHERE.
+						+ Dễ dàng chuyển đổi cú pháp từ INNER JOIN thành OUTER JOIN.
+
+						Ví dụ:
+							SELECT *
+							FROM DonDatHang
+								JOIN KhachHang
+								ON DonDatHang.MaKH = KhachHang.MaKH
+
+					2.1. Điều kiện kết nối (so sánh) sẽ được viết trong mệnh đề WHERE.
 
 						Ví dụ:
 							SELECT *
 							FROM PhongBan, DuAn
 							WHERE PhongBan.MaPB = DuAn.MaPB
 
-					- Tạo ra một bảng tạm, được lồng (nested) bên trong một bảng khác bằng mệnh đề WHERE.
+					2.2. Tạo ra một bảng tạm, được lồng (nested) bên trong một bảng khác bằng mệnh đề WHERE.
 
 						Ví dụ:
 						SELECT *
 						FROM NhanVien
 						WHERE MaPB IN (
-							SELECT MaPB
-							FROM Departments
-							WHERE TenPB = 'CNTT'
+								SELECT MaPB
+								FROM Departments
+								WHERE TenPB = 'CNTT'
 							      )
-
-
-					- Một mệnh đề JOIN riêng biệt giống như SELECT, FROM, WHERE,...
-						+ Được thêm vào trong SQL2.
-						+ Giúp phân biệt rõ ràng điều kiện JOIN với các điều kiện lựa chọn trong câu lệnh WHERE.
-
-						Ví dụ:
-							SELECT *
-							FROM DonDatHang
-							JOIN KhachHang ON DonDatHang.MaKH = KhachHang.MaKH
 
 
 			2.2. Phép chia (DIVISION) | ÷: Tìm các dòng trong bảng thứ nhất có liên quan đến tất cả các dòng trong bảng thứ hai.
@@ -3551,11 +3557,8 @@ Các phép toán ĐSQH cơ bản sẽ không đủ để thực hiện được 
 		* Công thức: <danh-sách-cột> ℑ <danh-sách-hàm> (R)
 
 			(Chưa có kí hiệu thống nhất cho hàm tập hợp, nên đôi khi còn được kí hiệu là: γ,...)
-	
-			- Thường được dùng chung với các hàm tập hợp.
-				+ Gom nhóm các dòng theo các cột, các dòng cùng nhóm sẽ có giá trị giống nhau trên cột đó.
-				+ Sau đó áp dụng các hàm tập hợp riêng biệt lên từng nhóm.
 
+			- Phân chia và gom những dòng giống nhau trong cùng một cột thành một nhóm, sau đó áp dụng các hàm tập hợp riêng biệt lên từng nhóm.
 				-> Gom nhóm các dòng giống nhau ở 1 hay nhiều cột.
 
 			- Nếu không có cột nào được liệt kê trong danh sách cột, nghĩa là không chia nhóm (chỉ có 1 nhóm lớn).
@@ -3580,6 +3583,7 @@ Các phép toán ĐSQH cơ bản sẽ không đủ để thực hiện được 
 					MaMH ℑ (MAX(Diem), MIN(Diem), AVG(Diem)) (KetQuaThi)
 
 	3. Phép kết ngoại (Outer join): Sau khi chỉ lấy những dòng chung, vẫn muốn giữ lại những dòng riêng của các bên.
+		- So sánh bằng giống phép kết tương đương (và vẫn giữ lại những dòng trùng nhau, ví dụ: hai dòng mà tất cả giá trị đều là NULL).
 		- Giúp tránh việc mất mát dữ liệu, không thể vì một bên không có dữ liệu mà bên còn lại cũng bị mất dữ liệu theo.
 		- Dòng dữ liệu của bên có dữ liệu vẫn giữ nguyên, tự động điền (padding) giá trị NULL cho các dòng không có dữ liệu.
 
@@ -3680,6 +3684,10 @@ Các phép toán ĐSQH cơ bản sẽ không đủ để thực hiện được 
 		3.3. Phép kết ngoại đủ (Full outer join / FULL JOIN): Trả về tất cả các dòng từ cả hai bảng, bảng bên trái và bảng bên phải (hoặc NULL nếu không có kết hợp).
 		
 			* Công thức: R ⟗ <điều-kiện-kết-nối> S
+
+				- Đây không phải là phép tích Đềcác (nhân tất cả các dòng).
+					+ Vẫn so sánh bằng giống phép kết tương đương.
+					+ Có thêm hai phép kết ngoại bên trái và phải.
 
 				- Không còn quan trọng bên nào làm mốc / làm chuẩn.
 					+ Chung của cả hai.
@@ -4635,7 +4643,7 @@ Một trong những câu lệnh đầu tiên là SELECT.
 
 			+ Dữ liệu cần lọc có thể là cột trong bảng hoặc điều kiện để kết nối (JOIN) giữa các bảng.
 
-			+ Sử dụng các toán tử so sánh {=, <, <=, >, >= và <>} để tra một biểu thức và sử dụng các toán tử luận lý {AND, OR, NOT} để kết nối các biểu thức.
+			+ Sử dụng các toán tử so sánh {=, <>, >, >=, <, <=} để kiểm tra một biểu thức và sử dụng các toán tử luận lý {AND, OR, NOT} để kết nối các biểu thức.
 
 			+ Giúp lựa ra dữ liệu theo một tiêu chí nào đó (càng nhiều bộ lọc thì sẽ càng có ít dữ liệu được hiển thị ra).
 
@@ -4705,6 +4713,8 @@ Một trong những câu lệnh đầu tiên là SELECT.
 
 		- Khi có một tập hợp các giá trị / mệnh đề đơn lẻ, rời rạc và được kết nối với nhau bằng toán tử OR, ta có thể thay thế bằng toán tử IN (giá trị rơi vào một trong những giá trị đã được liệt kê).
 
+		- Sử dụng so sánh bằng để kiểm tra giá trị có tồn tại trong tập hợp hay không.
+
 		* Lưu ý: Chỉ sử dụng được toán tử IN khi có thể liệt kê được tập giá trị.
 			- So sánh bằng chính xác một giá trị nào đó, còn những khoảng số thực sẽ không thể liệt kê được vì giữa hai số thực sẽ có vô vàn những số thực khác.
 			- Mặc dù đối với BETWEEN và AND thì vẫn có thể sử dụng khoảng số thực bình thường.
@@ -4722,7 +4732,7 @@ Một trong những câu lệnh đầu tiên là SELECT.
 
 	WHERE <Tên bảng> IS NULL
 	WHERE <Tên bảng> IS NOT NULL
-	WHERE NOT <Tên bảng IS NULL>
+	WHERE NOT <<Tên bảng> IS NULL>
 
 		- Trong thực tế, sẽ có những lúc mà ta không thể xác định được giá trị / thông tin của dữ liệu.
 			+ Có thể là do không biết, bị giấu hoặc trở nên vô nghĩa trong ngữ cảnh sử dụng, nên ta không thể sử dụng toán tử so sánh thông thường được.
@@ -4850,18 +4860,23 @@ Dù sử dụng cho mục đích nào thì kết quả hiển thị ra luôn dư
 
 ==========================================================================================
 
-[CÁC CÂU TRUY VẤN LỒNG/ TRUY VẤN CON - NESTED QUERY/ SUB-QUERY]
+[TRUY VẤN LỒNG - NESTED QUERY]
 
 	* Tập hợp (Set): Không được phép trùng.
 	* Danh sách (List): Được phép trùng.
 
-Có rất nhiều cách khác nhau, và đây là một trong những cách đơn giản nhất.
+Thay vì được sử dụng độc lập để trả về kết quả. Giờ đây, kết quả của câu truy vấn có thể được sử dụng để lồng vào bên trong một câu truy vấn khác thông qua các toán tử so sánh.
+	- Truy vấn Con/ Truy vấn phụ (Subquery/ Inner query/ Inner select): Được nhúng vào một truy vấn khác, kết quả truy vấn sẽ được chính nơi đó sử dụng.
+	- Truy vấn Cha/ Truy vấn ngoài (Parent query/ Outer query/ Outer select): Chứa bên trong một truy vấn phụ và cần truy vấn phụ này trả về kết quả để có thể xử lý tiếp.
 
 Trong một câu SQL có chứa/ lồng bên trong một câu SQL khác.
-	- Câu truy vấn phụ cũng có thể được lồng trong mệnh đề SELECT, FROM và WHERE.
+	- Câu truy vấn phụ có thể được lồng trong mệnh đề SELECT, FROM, WHERE hoặc bất cứ nơi nào cần thiết.
 	- Kỹ thuật này được gọi là "Đặt câu hỏi gián tiếp" hoặc "So sánh tương quan".
+	- Nếu kết quả trả về là một giá trị duy nhất (1 dòng và 1 cột), giá trị này sẽ được gọi là giá trị vô hướng (scalar value).
 
 	-> Kỹ thuật viết truy vấn theo kiểu hỏi gián tiếp.
+
+Có rất nhiều cách khác nhau, và đây là một trong những cách đơn giản nhất.
 
 Trong mệnh đề WHERE của câu lệnh SELECT, "bộ lọc" có thể là:
 
@@ -4880,9 +4895,9 @@ Trong mệnh đề WHERE của câu lệnh SELECT, "bộ lọc" có thể là:
 
 --------------------------------------------------------------------------------
 
-- Câu truy vấn phụ/ truy vấn con/ truy vấn lồng ở bên trong phải được thực thi thành công và trả về giá trị, thì câu truy vấn bên ngoài mới có thể thực thi tiếp được.
+Câu truy vấn phụ ở bên trong phải được thực thi thành công và trả về giá trị, thì câu truy vấn bên ngoài mới có thể thực thi tiếp được.
 
-- Câu truy vấn bên ngoài có thể đón giá trị trả về từ câu truy vấn phụ bằng các toán tử so sánh (=, >, <, IN,...), miễn là có cùng kiểu dữ liệu trả về-nhận vào.
+Câu truy vấn bên ngoài có thể đón giá trị trả về từ câu truy vấn phụ bằng các toán tử so sánh (=, >, <, IN, ALL,...), miễn là có cùng kiểu dữ liệu trả về-nhận vào.
 
 * Tuỳ vào cách viết mà một câu lệnh SELECT có thể:
 
@@ -4946,17 +4961,30 @@ Trong mệnh đề WHERE của câu lệnh SELECT, "bộ lọc" có thể là:
 
 		- Có ba kiểu để so sánh một giá trị với một tập hợp các giá trị được trả về từ câu truy vấn phụ:
 
-			IN: Chỉ được so sánh bằng, chọn ra dữ liệu trùng với một trong các dữ liệu được liệt kê trong tập hợp.
+			IN: Chỉ được so sánh bằng, kiểm tra giá trị có tồn tại trong tập hợp hay không.
+				- Khi viết:
+					+ Phía trước không cần toán tử so sánh bằng.
+					+ Phía sau phải là một câu truy vấn lồng hoặc một tập hợp (trùng hoặc không trùng) các giá trị được liệt kê cách nhau bởi dấu phẩy.
+				- Nếu tập hợp chỉ bao gồm 1 giá trị, có thể trực tiếp sử dụng dấu bằng để so sánh thay vì từ khoá IN.
+				- Điều kiện so sánh sẽ trả về TRUE nếu giá trị là một phần tử của tập hợp.
+				- Chỉ cần thoả mãn một trong những giá trị được liệt kê trong IN là được, không cần phải thoả mãn tất cả.
+				- Được dùng để thay thế cho cách viết điều kiện OR liên tiếp nhau.
 
-			ALL: Được sử dụng các toán tử so sánh còn lại (<>, >, <,...), chọn ra dữ liệu phải thoả mãn điều kiện với tất cả dữ liệu trong tập hợp.
+			ANY/ SOME: Được sử dụng tất cả các toán tử so sánh (không chỉ riêng mỗi dấu bằng giống như từ khoá IN), kiểm tra giá trị có thoả mãn điều kiện với các giá trị trong câu truy vấn lồng hay không.
+				- Khi viết:
+					+ Phía trước phải chỉ rõ toán tử so sánh cần sử dụng.
+					+ Phía sau phải là một câu truy vấn lồng.
+				- Điều kiện so sánh sẽ trả về TRUE nếu giá trị là một phần tử của tập hợp.
+				- Nếu câu truy vấn phụ là rỗng, không có giá trị nào để so sánh, điều kiện so sánh với ANY/ SOME sẽ mặc định là FALSE.
+				- Nghĩa là nếu đem một giá trị đi so sánh với tập hợp các giá trị trong câu truy vấn phụ (và câu truy vấn phụ trả về kết quả rỗng) thì giá trị đó KHÔNG {=, >, <,...} so với với bất kì giá trị nào trong truy vấn phụ.
+
+			ALL: Được sử dụng tất cả các toán tử so sánh, kiểm tra giá trị có thoả mãn điều kiện với tất cả các giá trị trong câu truy vấn lồng hay không.
+				- Khi viết:
+					+ Phía trước phải chỉ rõ toán tử so sánh cần sử dụng.
+					+ Phía sau phải là một câu truy vấn lồng.
 				- Điều kiện so sánh sẽ trả về TRUE nếu tất cả các giá trị trong tập hợp đều thỏa mãn điều kiện so sánh.
 				- Nếu câu truy vấn phụ là rỗng, không có giá trị nào để so sánh, điều kiện so sánh với ALL sẽ mặc định là TRUE.
 				- Nghĩa là nếu đem một giá trị đi so sánh với tập hợp các giá trị trong câu truy vấn phụ (và câu truy vấn phụ trả về kết quả rỗng) thì giá trị đó {=, >, <,...} so với với tất cả giá trị trong truy vấn phụ.
-
-			ANY/ SOME: Được sử dụng các toán tử so sánh còn lại, chọn ra dữ liệu thoả mãn điều kiện với một trong các dữ liệu được liệt kê trong tập hợp.
-				- Điều kiện so sánh sẽ trả về TRUE nếu bất kỳ giá trị nào trong tập hợp thỏa mãn điều kiện so sánh.
-				- Nếu câu truy vấn phụ là rỗng, không có giá trị nào để so sánh, điều kiện so sánh với ANY/ SOME sẽ mặc định là FALSE.
-				- Nghĩa là nếu đem một giá trị đi so sánh với tập hợp các giá trị trong câu truy vấn phụ (và câu truy vấn phụ trả về kết quả rỗng) thì giá trị đó KHÔNG {=, >, <,...} so với với bất kì giá trị nào trong truy vấn phụ.
 
 			Ví dụ: Liệt kê những đơn hàng do những nhân viên có quê ở Luân Đôn phụ trách.
 			
@@ -5027,6 +5055,49 @@ Tìm số lớn/ bé nhất trong một tập hợp:
 					WHERE Category = 'Electronics'
 				  )
 
+--------------------
+
+Ngoài việc sử dụng một giá trị đơn để so sánh với một tập hợp các giá trị đơn khác, ta cũng có thể so sánh tổ hợp nhiều cột cùng một lúc.
+
+	Ví dụ: Liệt kê mã nhân viên là đồng nghiệp (làm việc cùng dự án) và trùng số giờ làm với nhân viên có mã là '123456789'.
+
+		SELECT DISTINCT EmployeeID
+		FROM WorksOn
+		WHERE (Pno, Hours) IN (
+					SELECT Pno, Hours
+					FROM WorksOn
+					WHERE EmployeeID = '123456789'
+				      )
+
+Trong một số trường hợp, nếu câu truy vấn lồng có sử dụng toán tử so sánh bằng (=) hoặc IN, ta có thể thay thế câu truy vấn lồng bằng một câu truy vấn đơn (với mệnh đề JOIN).
+
+	Ví dụ: Liệt kê danh sách nhân viên có người phụ thuộc cùng giới tính với mình.
+
+		-- Câu truy vấn lồng
+		SELECT E.FirstName, E.LastName
+		FROM Employee AS E
+		WHERE E.EmployeeID IN (
+					SELECT D.DependentID
+					FROM Dependent AS D
+					WHERE E.Gender = D.Gender
+				      )
+
+		-- Câu truy vấn đơn
+		SELECT E.FirstName, E.LastName
+		FROM Employee AS E, Dependent AS D
+		WHERE E.EmployeeID = D.DependentID
+		      AND E.Gender = D.Gender
+
+----------------------------------------
+
+EXISTS và UNIQUE:
+
+Là hai hàm trả về kết quả TRUE hoặc FALSE.
+
+* EXISTS: Hàm dùng để kiểm tra kết quả của câu truy vấn lồng có rỗng (không có dòng nào) hay không. Kết quả là TRUE nếu có chứa ít nhất một dòng và FALSE nếu bảng rỗng.
+
+* UNIQUE: Hàm dùng để kiểm tra kết quả của câu truy vấn lồng có phải là một tập hợp (không trùng) hay là một tập hợp đa phần tử (có trùng). Kết quả là TRUE nếu không có dòng nào trùng và FALSE nếu có một dòng trùng.
+
 ------------------------------------------------------------
 
 [CÂU TRUY VẤN LỒNG TRONG MỆNH ĐỀ SELECT]
@@ -5076,9 +5147,16 @@ Vì mệnh đề FROM nhận vào một bảng, nên miễn là câu truy vấn 
 
 [HÀM TẬP HỢP/ THỐNG KÊ - AGGREGATE FUNCTION]
 
-Là những phép toán/ hình thức để thống kê/ tập hợp (aggregation) dữ liệu.
+	* Tập được sắp toàn phần (Total order): Còn được gọi là tập hợp so sánh được.
+		- Là tập hợp mà mọi cặp phần tử đều có thể so sánh được với nhau.
+		- Khi lấy hai giá trị bất kì trong miền, ta có thể xác định được thứ tự xuất hiện (trước-sau) của chúng.
 
 Trong Database Engine, câu lệnh SELECT ngoài việc đảm nhận nhiệm vụ hiển thị, còn hỗ trợ một loạt các hàm với nhiệm vụ gom dữ liệu (theo một nhóm dòng - cột) và tính toán trên nhóm dữ liệu đã gom được.
+
+	- Là những phép toán/ hình thức để thống kê/ tập hợp (aggregation) dữ liệu.
+		+ Chỉ dùng được sau mệnh đề SELECT và HAVING.
+		+ Tự động loại bỏ các giá trị NULL trong quá trình tính toán.
+		+ Nhưng nếu không có dòng nào được trả về (vì tất cả giá trị trong cột đều NULL) thì kết quả trả về của các phép tính sẽ là NULL.
 
 	- Bao gồm những hàm:
 
@@ -5086,12 +5164,10 @@ Trong Database Engine, câu lệnh SELECT ngoài việc đảm nhận nhiệm v�
 			SUM()
 			AVG()
 
-		+ Dùng được cho cả những giá trị số và chuỗi:
+		+ Dùng được cho cả những giá trị số và chuỗi (total order):
 			COUNT()
 			MIN()
 			MAX()
-
-	- Chỉ dùng được sau mệnh đề SELECT và HAVING.
 
 ------------------------------------------------------------
 
@@ -5125,16 +5201,20 @@ COUNT <Tên cột>: Đếm trong phạm vi của một cột.
 
 		+ Trong quá trình đếm, không quan tâm dữ liệu có bị trùng hay không. Vì vậy, cần sử dụng thêm từ khoá DISTINCT (trong phần tham số của câu lệnh đếm) để loại bỏ đi những dòng giá trị bị trùng.
 
-		Ví dụ: Đếm số lượng nhân viên làm việc trong các dự án, nhưng loại bỏ đi những nhân viên trùng.
+	- Nếu không có dòng nào được trả về (vì tất cả giá trị trong cột đều NULL) thì kết quả trả về sẽ là 0.
 
-			SELECT COUNT(DISTINCT EmployeeID)
-			FROM WorksOn
+	Ví dụ: Đếm số lượng nhân viên làm việc trong các dự án, nhưng loại bỏ đi những nhân viên trùng.
+
+		SELECT COUNT(DISTINCT EmployeeID)
+		FROM WorksOn
 
 COUNT(*): Đếm số dòng đang có trong bảng (không phải đếm riêng cho cột nào, vì dấu sao '*' đại diện cho tất cả các cột), không quan tâm đến tiêu chuẩn nào khác.
 
-	- Với các phép toán gom nhóm khác (kể cả với hàm COUNT()), giá trị NULL sẽ được tự động loại bỏ trước khi thực hiện tính toán, vì các tính toán đều phải dựa trên sự xuất hiện của giá trị và NULL lại không được xem là sự xuất hiện - không thể đếm được.
+	- Là ngoại lệ duy nhất khi giá trị NULL cũng được tính.
+		+ Trong khi với các phép toán gom nhóm khác (kể cả với hàm COUNT()), giá trị NULL sẽ được tự động loại bỏ trước khi thực hiện tính toán.
+		+ Vì các tính toán đều phải dựa trên sự xuất hiện của giá trị và NULL lại không được xem là sự xuất hiện - không thể đếm được.
 
-		-> NULL là thứ không thể đếm được.
+		-> NULL là thứ không thể đếm (và tính toán) được.
 
 	- Nếu muốn đếm ô chứa trạng thái NULL, COUNT(*) là phép toán duy nhất làm được điều này.
 		+ Kết quả trả về là cả một dòng chứ không phải cột chứa giá trị NULL.
@@ -5184,7 +5264,9 @@ Cách sử dụng tương tự COUNT() khi cũng tính toán các giá trị the
 * Cú pháp:
 	GROUP BY <Danh sách cột cần gom nhóm>
 
-		- Được dùng để gom nhóm dữ liệu trước khi thực hiện các thao tác thống kê.
+		- Là những phân vùng (partition) của một bảng, dữ liệu sẽ được phân chia và gom thành những nhóm khác nhau.
+
+		- Sau đó thực hiện các thao tác thống kê lên từng nhóm dữ liệu.
 
 		Ví dụ: Đếm xem MỖI thành phố có bao nhiêu nhân viên.
 
@@ -5361,7 +5443,7 @@ Các phép toán trên tập hợp trong SQL cũng giống như trong ĐSQH khi 
 
 1. PHÉP HỘI (UNION):
 
-	Ví dụ: Liệt kê tên các nhân viên thuộc đơn vị 1 hoặc 2.
+	Ví dụ 1: Liệt kê tên các nhân viên thuộc đơn vị 1 hoặc 2.
 
 		SELECT FirstName
 		FROM Employees
@@ -5373,11 +5455,23 @@ Các phép toán trên tập hợp trong SQL cũng giống như trong ĐSQH khi 
 		FROM Employees
 		WHERE DNum = 2
 
+	Ví dụ 2: Liệt kê mã số nhân viên làm việc cho phòng CNTT hoặc tham gia đề án số 1812.
+
+		SELECT NV.MaNV
+		FROM NhanVien NV, PhongBan PB
+		WHERE NV.MaPB = PB.MaPB AND TenPB = 'CNTT'
+
+		UNION
+
+		SELECT NV.MaNV
+		FROM PhanCongCongViec
+		WHERE MaDA = '1812'
+
 --------------------------------------------------------------------------------
 
 2. PHÉP GIAO (INTERSECT):
 
-	Ví dụ: Liệt kê danh sách mã nhân viên tham gia cả hai dự án 1 và 2.
+	Ví dụ 1: Liệt kê danh sách mã nhân viên tham gia cả hai dự án 1 và 2.
 
 		SELECT EmployeeID
 		FROM WorksOn
@@ -5389,11 +5483,33 @@ Các phép toán trên tập hợp trong SQL cũng giống như trong ĐSQH khi 
 		FROM WorksOn
 		WHERE PNum = 2
 
+	Ví dụ 2: Liệt kê mã nhân viên của các quản lý là nam, có quản lý nhiều hơn 3 nhân viên.
+
+		-- Lấy ra danh sách người quản lý (cả nam và nữ)
+		-- có quản lý nhiều hơn 3 nhân viên
+		SELECT MaNguoiQuanLy
+		FROM NhanVien
+		WHERE MaNguoiQuanLy IS NOT NULL
+		GROUP BY MaNguoiQuanLy
+		HAVING COUNT(*) > 3
+
+		INTERSECT
+
+		-- Danh sách những người quản lý là nam
+		SELECT MaNV
+		FROM NhanVien
+		WHERE MaNV IN (
+				SELECT MaNguoiQuanLy
+				FROM NhanVien
+				WHERE MaNguoiQuanLy IS NOT NULL
+			      )
+		      AND GioiTinh IN ('Nam')
+
 --------------------------------------------------------------------------------
 
 3. PHÉP TRỪ (EXCEPT):
 
-	Ví dụ: Liệt kê tên mã số các nhân viên chỉ tham gia dự án 1 và không tham gia dự án 2.
+	Ví dụ 1: Liệt kê tên mã số các nhân viên chỉ tham gia dự án 1 và không tham gia dự án 2.
 
 		SELECT EmployeeID
 		FROM WorksOn
@@ -5405,6 +5521,16 @@ Các phép toán trên tập hợp trong SQL cũng giống như trong ĐSQH khi 
 		FROM WorksOn
 		WHERE PNum = 2
 
+	Ví dụ 2: Liệt kê mã nhân viên của những nhân viên chưa từng tham gia dự án nào (nhân viên mới).
+
+		SELECT MaNV
+		FROM NhanVien
+
+		EXCEPT
+
+		SELECT DISTINCT MaNV
+		FROM PhanCongCongViec
+
 --------------------------------------------------------------------------------
 
 ==========================================================================================
@@ -5415,21 +5541,24 @@ Vì những kỹ thuật thiết kế mà dữ liệu sẽ được tách ra và
 
 	- Cần có một sự am hiểu nhất định về các bảng trước khi ghép.
 
-	- Toàn bộ các dòng dữ liệu từ các bảng sẽ được gom về cùng một bảng (bảng tạm) trong RAM của Database Engine, hợp lại thành một bảng duy nhất và không làm ảnh hưởng đến những dữ liệu gốc trong mỗi bảng.
+	- Không ngại việc nhân bản thêm dữ liệu để ghép, miễn hợp nhau là được.
+
+	- Việc quét chọn và thực thi hai câu lệnh SQL sẽ không được gọi là JOIN, vì đây mới chỉ là hai câu lệnh riêng biệt được thực thi cùng một lúc và sẽ cho ra hai tập kết quả riêng biệt nhau.
+		+ Trong khi đó, JOIN là hợp/ gom tất cả dữ liệu về cùng một bảng.
+		+ Toàn bộ các dòng dữ liệu từ các bảng sẽ được gom về cùng một bảng (bảng tạm) trong RAM của Database Engine, hợp lại thành một bảng duy nhất và không làm ảnh hưởng đến những dữ liệu gốc trong mỗi bảng.
 
 	- Các dữ liệu sẽ được ghép ngang thay vì ghép dọc.
 
-		* Ghép ngang: Để các dòng của các bảng sát vào nhau (kè kè / kế bên / song song bên nhau) về bên trái hoặc phải.
+		* Ghép ngang: Để các dòng của các bảng sát vào nhau (kè kè / kế bên / song song với nhau) về bên trái hoặc phải.
 			-> Thêm cột.
 
 		* Ghép dọc: Dữ liệu sẽ được chèn vào đầu hoặc cuối bảng trong cùng một cột, giúp gia tăng thêm dữ liệu cho một bảng.
 			-> Thêm dòng.
 
+	-> Tạm thời ghép các bảng sát nhau theo chiều ngang để tổng hợp dữ liệu.
+		(Việc SELECT cùng lúc được nhiều bảng.)
+
 	- Việc sử dụng JOIN để ghép bảng chỉ khiến cho dữ liệu nhiều lên, chứ không làm thay đổi tư duy tính toán về SQL, nghĩa là ta có thể tận dụng lại toàn bộ kiến thức khi tương tác với một bảng.
-
-	- Không ngại việc nhân bản thêm dữ liệu để ghép, miễn hợp nhau là được.
-
-	- Việc quét chọn và thực thi hai câu lệnh SQL sẽ không được gọi là JOIN, vì đây mới chỉ là hai câu lệnh riêng biệt được thực thi cùng một lúc, nhưng sẽ cho ra hai tập kết quả riêng biệt nhau. Trong khi đó, JOIN là hợp tất cả về thành cùng một bảng.
 
 	- Vì hai bảng khác nhau có quyền đặt tên cột trùng nhau, nên khi ghép lại sẽ có hiện tượng tên cột bị trùng và gây bối rối (ambiguous). Vì vậy, để tránh nhầm lẫn cũng như tránh bị trùng lặp, ta cần phải:
 
@@ -5457,12 +5586,7 @@ Vì những kỹ thuật thiết kế mà dữ liệu sẽ được tách ra và
 				FROM VnDict vn, EnDict en
 				ORDER BY vn.Nmbr
 
-	-> Tạm thời ghép các bảng sát nhau theo chiều ngang để tổng hợp dữ liệu.
-		(Việc SELECT cùng lúc được nhiều bảng.)
-
-* Cột chung (Common Column): Là cột gồm những dòng chứa bên trong những giá trị tương quan (hợp cạ / hợp rơ) nhau giữa hai bảng. Không quan trọng tên cột, chỉ quan tâm dữ liệu bên trong có sự tương đồng để có thể tiến hành ghép.
-
-* Tiêu chuẩn ghép (Join condition): Điều kiện của cột để ghép nối.
+	- Sau khi đã tìm ra được dữ liệu bao gồm cả phần chung và riêng, ta vẫn có quyền sử dụng thêm bộ lọc WHERE trên một ô nào đó như bình thường (HAVING chỉ sử dụng khi có gom nhóm - GROUP BY).
 
 --------------------------------------------------------------------------------
 
@@ -5480,7 +5604,7 @@ Vì những kỹ thuật thiết kế mà dữ liệu sẽ được tách ra và
 
 	- Bùng nổ "dân số" kết quả.
 
-		-> Nguyên team đi vào hết.
+	-> Nguyên team đi vào hết.
 
 	* Cú pháp chuẩn:
 		SELECT *
@@ -5526,9 +5650,9 @@ Vì những kỹ thuật thiết kế mà dữ liệu sẽ được tách ra và
 
 	- Ngắm nhìn cấu trúc bên trong bảng một hồi lâu rồi mới bắt đầu ghép.
 
-	- Ghép khi thoả tiêu chí / điều kiện và ghép bằng toán tử = hoặc >=, <=...
+	- Ghép khi thoả tiêu chí / điều kiện và ghép bằng toán tử = hoặc >=, <=,...
 
-		-> Gió tầng nào gặp mây tầng đó.
+	-> Gió tầng nào gặp mây tầng đó.
 
 	* Cú pháp chuẩn:
 		-- Cách tường minh
@@ -5577,7 +5701,7 @@ Vì những kỹ thuật thiết kế mà dữ liệu sẽ được tách ra và
 
 	- Ngoài ra, cũng có kỹ thuật khác để chọn được những dòng khác nhau, được gọi là UNION.
 
-		-> Chơi hết mình, phần còn lại phụ thuộc vào đối phương.
+	-> Chơi hết mình, phần còn lại phụ thuộc vào đối phương.
 
 	* Có ba nhánh nhỏ:
 
@@ -5669,7 +5793,55 @@ Vì những kỹ thuật thiết kế mà dữ liệu sẽ được tách ra và
 
 ----------------------------------------
 
-	- Sau khi đã tìm ra được dữ liệu bao gồm cả phần chung và riêng, ta vẫn có quyền sử dụng thêm bộ lọc WHERE trên một ô nào đó như bình thường (HAVING chỉ sử dụng khi có gom nhóm - GROUP BY).
+		Khi ghép dâng hiến, nếu chỉ muốn lấy những phần riêng (của một bên), ta có thể kết hợp thêm điều kiện WHERE.
+
+			Ví dụ: Hai bảng giống nhau, đều lưu thông tin về người.
+
+				NameListsA		NameListsB
+				------------------	--------------------
+				| ID | Name      |	| ID | Name        |	
+				|----+-----------|	|----+-------------|
+				| 1  | Pirate    |	| 1  | Rutabaga    |
+				| 2  | Monkey    |	| 2  | Pirate      |
+				| 3  | Ninja     |	| 3  | Darth Vader |
+				| 4  | Spaghetti |	| 4  | Ninja       |
+				------------------	--------------------
+
+				-- Chỉ lấy những phần riêng của bảng bên trái:
+				--	(Monkey và Spaghetti),
+				-- bằng cách lọc ra những dòng mà bên phải không có
+				SELECT *
+				FROM NameListsA AS A
+					LEFT OUTER JOIN NameListsB AS B
+					ON A.Name = B.Name
+				WHERE B.ID IS NULL
+
+					---------------------------------------
+					| ID | Name      | ID   | Name        |	
+					|----+-----------+------+-------------|
+					| 2  | Monkey    | NULL | NULL        |
+					| 4  | Spaghetti | NULL | NULL        |
+					---------------------------------------
+
+				-- Chỉ lấy những phần riêng của cả hai bảng:
+				--	(Monkey và Spaghetti) của bảng A,
+				--	(Rutabaga và Darth Vader) của bảng B,
+				-- bằng cách lọc ra những dòng
+				-- mà cả hai bên đều không có
+				SELECT *
+				FROM NameListsA AS A
+					FULL OUTER JOIN NameListsB AS B
+					ON A.Name = B.Name
+				WHERE A.ID IS NULL OR B.ID IS NULL
+
+					-----------------------------------------
+					| ID   | Name      | ID   | Name        |
+					|------+-----------+------+-------------|
+					| 2    | Monkey    | NULL | NULL        |
+					| 4    | Spaghetti | NULL | NULL        |
+					| NULL | NULL      | 1    | Rutabaga    |
+					| NULL | NULL      | 3    | Darth Vader |
+					-----------------------------------------
 
 ------------------------------------------------------------
 
@@ -5804,8 +5976,7 @@ Bước 06: Chuyển thành những câu lệnh SQL.
 
 	- Học cách viết SQL: https://viblo.asia/s/tu-con-ga-den-master-sql-GyZJZlY2Vjm
 
-	- Thực hành SQL - Tran Huong CNTT
-: https://www.youtube.com/playlist?list=PLLXCN-2OVrTsciN96pCFXMtD3OwA3XMJF
+	- Thực hành SQL - Tran Huong CNTT: https://www.youtube.com/playlist?list=PLLXCN-2OVrTsciN96pCFXMtD3OwA3XMJF
 
 	- Video bài giảng KMA: https://youtube.com/playlist?list=PLSe6_C9mboBDG8wVFZfSycRQnS51T0H3M&si=JAZKPaot1Fp3egHN
 
