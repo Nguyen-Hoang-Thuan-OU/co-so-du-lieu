@@ -2055,6 +2055,10 @@ Mỗi giá trị NULL được xem là một giá trị riêng biệt và khác 
 
 	[2. DƯỚI GÓC NHÌN CỦA RÀNG BUỘC DỮ LIỆU - CONSTRAINT]
 
+Sẽ có trường hợp hai đối tượng / thực thể khác nhau hoàn toàn nhưng lại có cùng một mã số, gây khó khăn trong việc xác định duy nhất một đối tượng / thực thể.
+	- Vì vậy, nếu các cột được áp dụng ràng buộc thì dữ liệu nhập vào sẽ theo đúng định dạng đã được quy định từ trước.
+	- Nhưng cần tránh việc lạm dụng ràng buộc và gây khó chịu cho người cung cấp thông tin.
+
 * Ràng buộc toàn vẹn (Integrity Constraint): Để đảm bảo tính nhất quán và an toàn, dữ liệu trong một bảng sẽ không thể được nhập một cách tuỳ tiện, mà phải thoả mãn một số ràng buộc và dữ liệu cũng phải có mối liên hệ với nhau.
 	- Là những điều kiện bất biến, không được vi phạm trong một CSDL.
 	- Được thực hiện trong quá trình thiết kế lược đề quan hệ, những ràng buộc về dữ liệu sẽ dần dần được gài vào.
@@ -4336,7 +4340,7 @@ Trong SQL Server:
 
 * Lưu ý:
 
-	- Câu mệnh (Statement) thường ám chỉ một câu lệnh SQL hoàn chỉnh, thực hiện một nhu cầu cụ thể và được thực thi bởi HQTCSDL.
+	- Câu lệnh (Statement) thường ám chỉ một câu lệnh SQL hoàn chỉnh, thực hiện một nhu cầu cụ thể và được thực thi bởi HQTCSDL.
 		-> Câu lệnh hoàn chỉnh.
 
 	- Mệnh đề (Clause) là từng từ khoá riêng lẻ (ví dụ: WHERE, FROM, SELECT, ORDER BY, GROUP BY,...) kết hợp với nhau theo nhiều cách để tạo thành một câu lệnh.
@@ -4520,31 +4524,36 @@ Một trong những câu lệnh đầu tiên là SELECT.
 
 * Cú pháp mở rộng: Thay đổi giá trị của kết quả bằng CASE.
 
-	SELECT <Danh sách cột>
-		CASE
-			WHERE <Điều kiện đầu tiên> THEN N'Giá trị hiển thị ra'
-			ELSE N'Giá trị hiển thị, tương đương với điều kiện thứ hai'
-		END AS 'Tên cột mới'
-	FROM  <Danh sách bảng>
+	-- Cú pháp so sánh bằng
+	CASE <Tên cột>
+		WHEN <Giá trị trong cột> THEN N'Giá trị hiển thị ra'
+		ELSE N'Giá trị thay thế'
+	END [AS] 'Tên cột mới'
+
+	-- Cú pháp so sánh không bằng
+	CASE
+		WHEN <Điều kiện đầu tiên> THEN N'Giá trị hiển thị ra'
+		ELSE N'Giá trị thay thế, tương đương với điều kiện thứ hai'
+	END [AS] 'Tên cột mới'
 
 		- Bên cạnh việc thay đổi tên cột được hiển thị ra, ta còn có thể thay đổi giá trị trả về được hiển thị ra ở bên trong các cột.
 
 		- Dựa trên việc so sánh để quyết định xem thông tin nào sẽ được hiển thị ra.
 			+ Nếu là so sánh bằng, tên cột được phép nằm phía sau từ khoá CASE.
-			+ Nếu là so sánh với các phép toán: >, <,..., tên cột được viết ở phía sau mện đề WHERE (được lồng trong CASE).
+			+ Nếu là so sánh với các phép toán: >, <,..., tên cột được viết ở phía sau từ khoá WHEN (được lồng trong CASE).
 
 		Ví dụ: Thay đổi giá trị hiển thị ra trong cột của bảng nhân viên và đặt tên cho cột có giá trị bị thay đổi.
 
 			SELECT Name,
 				CASE
-					WHERE Salary >= 30,000,000 THEN N'Lương cao'
+					WHEN Salary >= 30,000,000 THEN N'Lương cao'
 					ELSE N'Lương thấp'
 				END AS 'Tình trạng lương',
 
 				CASE Gender
-					WHERE 'Male' THEN 'Nam'
+					WHEN 'Male' THEN 'Nam'
 					ELSE N'Nữ'
-				END AS 'Giới tính'
+				END 'Giới tính'
 
 			FROM Employees
 
@@ -4784,27 +4793,37 @@ Một trong những câu lệnh đầu tiên là SELECT.
 
 * Cú pháp tạm đầy đủ của SELECT:
 
-	(* Quy ước:
+Một câu truy vấn trong SQL có thể có tối đa sáu mệnh đề, nhưng chỉ có hai mệnh đề SELECT và FROM là bắt buộc phải có.
+
+	* Quy ước trong cú pháp:
 		- Dấu | chỉ sự cho phép lựa chọn (hoặc).
 		- Dấu ngoặc vuông [] chỉ thành phần không bắt buộc (tuỳ chọn).
-		- Dấu ba chấm '...' chỉ sự lặp lại (0 hay nhiều lần).)
+		- Dấu ba chấm '...' chỉ sự lặp lại (0 hoặc nhiều lần).
 
-	SELECT
-		<* | Tên các cột [AS TênMớiCủaCột] [,...]
-		     Biểu thức [AS ĐặtTênChoBiểuThức] [,...]>
-		DISTINCT | ALL
-		Hàm() AS ĐặtTênChoHàm
-		Nested Query / Sub-Query: Câu truy vấn lồng nhau.
 
-	FROM <Tên bảng [AS TênGọiTắt] [,...]>
+	* Cú pháp:
 
-	[WHERE <Điều kiện lọc các dòng>]
+		SELECT
+			<* | Tên cột [AS TênMớiCủaCột] [,...]>
+			<Biểu thức [AS ĐặtTênChoBiểuThức] [,...]>
+			<DISTINCT | ALL | CASE ... END>
+			<Hàm() AS ĐặtTênChoHàm>
+			<Nested Query / Sub-Query: Câu truy vấn lồng nhau>
 
-	[GROUP BY <Danh sách cột cần gom nhóm>]
+		FROM
+			<Tên bảng [AS TênGọiTắt] [,...]>
+			<Nested Query / Sub-Query: Câu truy vấn lồng nhau>
 
-		[HAVING <Điều kiện lọc cho các nhóm đã tạo>]
+		[WHERE
+			<Điều kiện lọc các dòng>			
+			<Nested Query / Sub-Query: Câu truy vấn lồng nhau>
+			<LIKE | IN | SOME/ ANY | BETWEEN ... AND ...>]
 
-	[ORDER BY <Danh sách cột muốn sắp xếp> [Kiểu sắp xếp: tăng hoặc giảm dần.]]
+		[GROUP BY <Danh sách cột cần gom nhóm>]
+
+			[HAVING <Điều kiện lọc cho các nhóm đã tạo>]
+
+		[ORDER BY <Danh sách cột muốn sắp xếp> [Kiểu sắp xếp: tăng hoặc giảm dần]]
 
 ------------------------------------------------------------
 
@@ -4880,18 +4899,18 @@ Có rất nhiều cách khác nhau, và đây là một trong những cách đơ
 
 Trong mệnh đề WHERE của câu lệnh SELECT, "bộ lọc" có thể là:
 
-	1. WHERE [Tên cột] (Toán-tử-so-sánh: =, >, <...) Giá-trị
+	1. WHERE <Tên cột> (Toán-tử-so-sánh: =, >, <...) <Giá-trị>
 		-> Có thể thay thế phần "Giá-trị" bằng một câu SQL khác, miễn vẫn trả về duy nhất một ô chứa duy nhất giá trị.
 
-	2. WHERE [Tên cột] LIKE '_ % _'
-	3. WHERE [Tên cột] BETWEEN ... AND ...
+	2. WHERE <Tên cột> LIKE '_ % _'
+	3. WHERE <Tên cột> BETWEEN ... AND ...
 
-	4. WHERE [Tên cột] IN (Một tập hợp các giá trị được liệt kê)
+	4. WHERE <Tên cột> IN <Một tập hợp các giá trị được liệt kê>
 		-> Có thể thay thế phần "(Một tập hợp các giá trị được liệt kê)" bằng một câu SQL khác, miễn vẫn trả về một tập hợp gồm nhiều giá trị cùng kiểu của cùng một cột.
 
-	5. WHERE [Tên cột] (Toán-tử-so-sánh: =, >, <...)
-				ALL (Một câu truy vấn lồng trả về một cột nhiều giá trị)
-				ANY (Một câu truy vấn lồng trả về một cột nhiều giá trị)
+	5. WHERE <Tên cột> (Toán-tử-so-sánh: =, >, <...)
+				ALL (Câu truy vấn lồng trả về một cột nhiều giá trị)
+				ANY (Câu truy vấn lồng trả về một cột nhiều giá trị)
 
 --------------------------------------------------------------------------------
 
@@ -5857,51 +5876,194 @@ Thứ tự thực hiện các mệnh đề truy vấn trong SQL:
 ==========================================================================================
 ==========================================================================================
 
+[THAO TÁC CẬP NHẬT DỮ LIỆU VỚI NGÔN NGỮ SQL TRÊN SQL SERVER]
+
+--------------------------------------------------------------------------------
+
+[CHÈN / THÊM DỮ LIỆU - INSERT]
+
+Có nhiều dạng khác nhau của câu lệnh INSERT.
+
+	1. Thêm nguyên cả một dòng vào một bảng.
+		- Không cần liệt kê danh sách tên cột, đổi lại, bắt buộc phải nhập đầy đủ giá trị cho tất cả các cột trong bảng.
+		- Thứ tự nhập giá trị phải trùng với thứ tự của cột trong bảng.
+		- Những giá trị nếu muốn mang trạng thái NULL thì phải ghi rõ NULL (không phải chuỗi NULL trong dấu nháy đơn).
+
+		* Cú pháp:
+			INSERT INTO <Tên bảng>
+			VALUES (Danh sách giá trị theo thứ tự của cột trong bảng)
+
+		Ví dụ: Thêm tất cả thông tin của một nhân viên mới vào trong bảng nhân viên.
+
+			-- Lược đồ quan hệ của bảng nhân viên
+			NhanVien(M̲a̲N̲V̲, HoTenNV, NgaySinh, GioiTinh, Luong, MaPB)
+
+			-- Thêm toàn bộ thông tin của một nhân viên mới
+			INSERT INTO NhanVien
+			VALUES (00069, N'Nguyễn Hoàng Thuận', '2000-04-23', 'Nam', NULL, NULL)
+
+	2. Chỉ định rõ những cột cần thêm giá trị.
+		- Được sử dụng khi không muốn nhập tất cả các giá trị của một dòng.
+		- Lúc này, thứ tự nhập chỉ cần tuân theo thứ tự của các cột được liệt kê trong câu lệnh INSERT INTO (không cần tuân theo cấu trúc của bảng).
+		- Chỉ bắt buộc liệt kê những cột được thiết kế NOT NULL và không có giá trị mặc định.
+		- Không cần liệt kê những cột cho phép NULL hoặc có giá trị mặc định vì chúng sẽ tự động được gán giá trị NULL hoặc giá trị mặc định.
+
+		* Cú pháp:
+			INSERT INTO <Tên bảng> (Danh sách cột cần thêm giá trị)
+			VALUES (Danh sách giá trị theo thứ tự của cột trong câu lệnh INSERT INTO)
+
+		Ví dụ: Thêm một số thông tin của một nhân viên mới vào trong bảng nhân viên.
+
+			-- Lược đồ quan hệ của bảng nhân viên
+			NhanVien(M̲a̲N̲V̲, HoTenNV, NgaySinh, GioiTinh, Luong, MaPB)
+
+			-- Thêm một số thông tin của một nhân viên mới
+			INSERT INTO NhanVien (MaNV, HoTenNV, NgaySinh, GioiTinh)
+			VALUES (00069, N'Nguyễn Hoàng Thuận', '2000-04-23', 'Nam')
+
+	3. Thêm nhiều dòng trên cùng một câu lệnh.
+
+		* Cú pháp:
+			INSERT INTO <Tên bảng> [(Danh sách cột cần thêm giá trị)]
+			VALUES (Danh sách các dòng, được cách nhau bởi dấu phẩy)
+
+		Ví dụ: Thêm nhiều nhân viên mới cùng một lúc.
+
+			-- Lược đồ quan hệ của bảng nhân viên
+			NhanVien(M̲a̲N̲V̲, HoTenNV, NgaySinh, GioiTinh, Luong, MaPB)
+
+			-- Thên nhiều nhân viên mới cùng một lúc
+			INSERT INTO NhanVien (MaNV, HoTenNV, NgaySinh, GioiTinh)
+			VALUES (00069, N'Nguyễn Hoàng Thuận', '2000-04-23', 'Nam'),
+			       (00096, N'Châu Hải My', '1966-12-06', 'Nữ'),
+			       (00106, N'Nguyễn Phúc Định Lai', '2012-02-27', 'Nam'),
+			       (00107, N'Nguyễn Phúc Định Luân', '2012-02-27', 'Nam')
+
+	4.1. Thêm dữ liệu là kết quả của câu lệnh SELECT.
+		- Không cần phải tự thêm (nhập tay) từng giá trị cho một hoặc nhiều dòng.
+		- Thay vào đó, sử dụng một câu truy vấn trả về một hoặc nhiều dòng.
+		- Yêu cần bảng trong câu lệnh SELECT phải tồn tại trước (có sẵn) để có thể lấy dữ liệu lên và đổ ngược trở lại vào câu lệnh INSERT.
+
+		* Cú pháp:
+			INSERT INTO <Tên bảng> [(Danh sách cột cần thêm giá trị)]
+			SELECT ... FROM ... [WHERE ... GROUP BY ... HAVING ...]
+
+	4.2. Tạo ra bảng (thật) rồi sau đó mới thêm dữ liệu là kết quả của câu lệnh SELECT.
+		- Sử dụng câu lệnh CREATE TABLE trước khi chèn dữ liệu để tạo ra một bảng mới.
+		- Bảng mới này vẫn là bảng thật và có thể truy vấn bình thường.
+		- Nếu không cần sử dụng nữa, ta có thể được xoá đi bằng câu lệnh DROP TABLE.
+		- Nếu thông tin của các bảng trong câu lệnh SELECT có thay đổi sau khi bảng mới được tạo ra, bảng mới này sẽ không được cập nhật; vì vậy, cần sử dụng view (khung nhìn) để giúp thông tin của bảng được cập nhật.
+
+		* Cú pháp:
+			CREATE TABLE <Tên bảng> (Tên-cột KIỂU-DỮ-LIỆU)
+			INSERT INTO <Tên bảng> [(Danh sách cột cần thêm giá trị)]
+			SELECT ... FROM ... [WHERE ... GROUP BY ... HAVING ...]
+
+		Ví dụ: Tạo ra bảng mới để lưu thông tin về số giờ làm việc trong tuần của nhân viên.
+
+			CREATE TABLE ThongTinLamViecTrongTuan
+				(TenNV VARCHAR(15),
+				 TenDA VARCHAR(15),
+				 SoGioLamViecTrongTuan DECIMAL(3,1))
+
+			INSERT INTO ThongTinLamViecTrongTuan (TenNV, TenDA, SoGioLamViecTrongTuan)
+
+			SELECT NV.TenNV, DA.TenDA, LV.SoGioLamViecTrongTuan
+			FROM DuAn DA, ThongTinLamViec LV, NhanVien NV
+			WHERE DA.MaDA = LV.MaDA AND LV.MaNV = NV.MaNV
+
+	4.3. [Ma đạo] Lấy kết quả của câu lệnh SELECT để tạo thành bảng mới.
+		- Sử dụng câu lệnh SELECT INTO để sao chép dữ liệu từ một bảng sang bảng mới.
+		- Bảng mới có cùng cấu trúc và dữ liệu với bảng kết quả của câu lệnh SELECT.
+		- Bảng mới này vẫn là bảng thật và có thể truy vấn bình thường.
+
+		* Cú pháp:
+			SELECT ... INTO ...
+			FROM ...
+			[WHERE ... GROUP BY ... HAVING ...]
+
+		Ví dụ: Tạo ra bảng mới để lưu thông tin về số lượng dự án đã tham gia của nhân viên.
+
+			SELECT NV.MaNV, NV.TenNV, COUNT (MaDA) AS SoLuongDA
+				INTO SoLuongDuAnCuaNhanVien
+			FROM NhanVien NV, PhanCongCongViec PC
+			WHERE NV.MaNV = PC.MaNV
+			GROUP BY NV.MaNV, NV.TenNV
+
+------------------------------------------------------------
+
+Đây là lúc mà các ràng buộc toàn vẹn phát huy tác dụng.
+
+	Ví dụ:
+		- Thêm một giá trị vào cột khoá ngoại khi giá trị này không thuộc miền giá trị của khoá chính.
+			-> Vi phạm ràng buộc tham chiếu.
+
+		- Báo lỗi khi không nhập giá trị cho khoá chính.
+			-> Vi phạm ràng buộc NOT NULL.		
+
+--------------------------------------------------------------------------------
+
+[SỬA / THAY ĐỔI DỮ LIỆU - UPDATE]
+
+Được sử dụng để sửa/ thay đổi dữ liệu trong một bảng.
+	- Mỗi câu lệnh UPDATE tương đương với một bảng, muốn cập nhật nhiều bảng thì sử dụng nhiều câu lệnh UPDATE.
+	- Kết hợp với mệnh đề WHERE để chỉ định cách lọc ra những dòng cần sửa và mệnh đề SET để chỉ định tên cột và giá trị mới.
+	- Có thể chỉ thay đổi một số giá trị trong một dòng hoặc tất cả các giá trị của một dòng (và sau đó là thay đổi nhiều dòng).
+	- Việc thay đổi giá trị khoá chính có thể làm ảnh hưởng đến các giá trị khóa ngoại.
+
+	* Cú pháp:
+		UPDATE <Tên bảng>
+		SET <Tên thuộc tính> = <Giá trị mới>
+		[WHERE <Điều kiện để lọc ra các dòng cần sửa>]
+
+	Ví dụ: Tăng lương cho nhân viên.
+
+		-- Tăng 10% lương cho tất cả nhân viên
+		UPDATE NhanVien
+		SET Luong = Luong * 1.1
+
+		-- Chỉ tăng 15% lương cho người quản lý
+		UPDATE NhanVien
+		SET Luong = Luong * 1.5
+		WHERE ChucVu = N'Quản lý'
+
+--------------------------------------------------------------------------------
+
+[XOÁ / BỎ DỮ LIỆU - DELETE]
+
+Được sử dụng để xoá các dòng khỏi bảng.
+	- Kết hợp với mệnh đề FROM để chỉ định bảng cần xoá và mệnh đề WHERE để chỉ định cách lọc ra những dòng cần xoá.
+	- Nếu khuyết mệnh đề WHERE thì tất cả các dòng sẽ bị xoá, nhưng vẫn sẽ chừa lại bảng (để loại bỏ bảng hoàn toàn, ta có thể sử dụng câu lệnh DROP TABLE).
+	- Có thể xem đây giống như một câu lệnh truy vấn để lấy dữ liệu ra, nhưng có điều không phải lấy ra để xem mà là để xoá (bằng câu lệnh DELETE).
+	- Tại một thời điểm, chỉ có thể xoá các dòng tại một bảng duy nhất.
+	- Việc xoá dữ liệu trong một bảng có thể ảnh hưởng đến những bảng khác nếu chúng có các ràng buộc khoá chính-khoá ngoại.
+
+	* Cú pháp:
+		DELETE FROM <Tên bảng>
+		[WHERE <Điều kiện để lọc ra các dòng cần xoá>]
+
+	Ví dụ: Xoá một, nhiều hoặc tất cả các dữ liệu trong bảng.
+
+		-- Xoá một dòng dữ liệu
+		DELETE FROM NhanVien
+		WHERE MaNV = '00069'
+
+		-- (Có thể) Xoá nhiều dòng dữ liệu
+		DELETE FROM NhanVien
+		WHERE TenNV LIKE '%An%'
+
+		-- Xoá tất cả các dòng dữ liệu
+		DELETE FROM NhanVien
+
+==========================================================================================
+==========================================================================================
+==========================================================================================
+
 [THIẾT KẾ CƠ SỞ DỮ LIỆU - DATABASE DESIGN]
 
---------------------------------------------------------------------------------
+==========================================================================================
 
-[NHỮNG LƯU Ý KHI ĐƯA DỮ LIỆU VÀO BẢNG]
-
-Khi nhập dữ liệu bằng câu lệnh INSERT INTO [Tên bảng](Thứ tự cột nếu cần) VALUES(...)
-
-	- Mặc định, nếu khi thiết kế không gài thêm ràng buộc, các giá trị (và toàn bộ giá trị) trong bảng được phép mang trạng thái NULL.
-
-* Chỉ định những tên cột sẽ nhập dữ liệu:
-
-	* Nếu không chỉ định những tên cột sẽ nhập dữ liệu.
-
-		- Bắt buộc phải nhập đầy đủ giá trị cho tất cả các cột đã thiết kế.
-
-		- Giá trị nhập vào sẽ phải được liệt kê theo đúng với thứ tự khi thiết kế.
-
-		- Những giá trị nếu muốn mang trạng thái NULL thì phải ghi rõ NULL (không phải chuỗi NULL).
-
-	* Nếu có chỉ định những tên cột sẽ nhập dữ liệu.
-
-		- Những cột không được liệt kê sẽ tự động được gán trạng thái NULL.
-
-		- Giá trị nhập vào sẽ tuân theo thứ tự liệt kê của tên cột trong câu lệnh INSERT INTO.
-
-		- Nếu muốn những cột đang liệt kê cũng mang trạng thái NULL thì vẫn có thể gán trạng thái NULL.
-
-* Ràng buộc dữ liệu:
-
-	* Nếu không có bất kì ràng buộc nào:
-
-		- Sẽ có trường hợp toàn bộ giá trị của một dòng đều là NULL.
-
-		- Sẽ có trường hợp hai đối tượng / thực thể khác nhau hoàn toàn nhưng lại có cùng một mã số, gây khó khăn trong việc xác định duy nhất một đối tượng / thực thể.
-
-	* Nếu có bất kì ràng buộc nào:
-
-		- Dữ liệu nhập vào sẽ theo đúng định dạng đã được quy định từ trước.
-
-		- Nhưng cần tránh việc lạm dụng ràng buộc và gây khó chịu cho người cung cấp thông tin.
-
---------------------------------------------------------------------------------
-
-[VẼ SƠ ĐỒ Ý NIỆM BẰNG VISUAL PARADIGM]
+	[VẼ SƠ ĐỒ Ý NIỆM BẰNG VISUAL PARADIGM]
 
 Bước 01: Tạo mới dự án trong Visual Paradigm.
 
@@ -5944,7 +6106,7 @@ Bước 06: Chuyển thành những câu lệnh SQL.
 
 ==========================================================================================
 
-[TRIẾT LÝ THIẾT KẾ BẢNG]
+	[TRIẾT LÝ THIẾT KẾ BẢNG]
 
 
 
